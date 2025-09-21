@@ -1,22 +1,16 @@
-import adapter from '@sveltejs/adapter-static';
+import vercel from '@sveltejs/adapter-vercel';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: vitePreprocess(),
-	kit: {
-		adapter: adapter({
-			fallback: 'index.html'
-		}),
-		paths: {
-			base: '',
-			assets: ''
-		},
-		prerender: {
-			handleMissingId: 'warn',
-			handleHttpError: 'warn'
-		}
-	}
+  preprocess: vitePreprocess(),
+  kit: {
+    adapter: vercel(),
+    csrf: { checkOrigin: true },
+    prerender: {
+      handleHttpError: 'warn'
+    }
+  }
 };
 
 export default config;

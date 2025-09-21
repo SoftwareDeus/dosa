@@ -1,15 +1,12 @@
-// See https://svelte.dev/docs/kit/types#app.d.ts
-// for information about these interfaces
-declare global {
-	namespace App {
-		interface Locals {
-			user: import('$lib/server/auth').SessionValidationResult['user'];
-			session: import('$lib/server/auth').SessionValidationResult['session'];
-		}
-	} // interface Error {}
-	// interface Locals {}
-} // interface PageData {}
-// interface PageState {}
+import type { Session, User, SupabaseClient } from '@supabase/supabase-js';
 
-// interface Platform {}
+declare global {
+  namespace App {
+    interface Locals {
+      supabase: SupabaseClient;
+      session: Session | null;
+      user: User | null;
+    }
+  }
+}
 export {};

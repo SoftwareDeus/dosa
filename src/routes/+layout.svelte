@@ -6,8 +6,7 @@
 	import '../app.css';  
 
 	let { children } = $props();
-
-	// Native-spezifische Initialisierung
+	
 	onMount(async () => {
 		if (Capacitor.isNativePlatform()) {
 			try {
@@ -18,7 +17,6 @@
 		}
 	});
 
-	// Navigation Items
 	const navItems = [
 		{ href: '/', icon: '🏠', label: 'Home' },
 		{ href: '/explore', icon: '🔍', label: 'Explore' },
@@ -32,12 +30,10 @@
 </script>
 
 <div class="flex flex-col h-screen">
-	<!-- Main Content -->
 	<main class="flex-1 overflow-y-auto">
 		{@render children()}
 	</main>
 
-	<!-- Bottom Navigation -->
 	<nav class="bg-white border-t border-gray-200 shadow-lg">
 		<div class="flex pb-safe-bottom">
 			{#each navItems as item}
@@ -61,17 +57,14 @@
 </div>
 
 <style>
-	/* Safe Area Support */
 	.pb-safe-bottom {
 		padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
 	}
 
-	/* Smooth scrolling */
 	main {
 		-webkit-overflow-scrolling: touch;
 	}
 
-	/* iOS Safari height fix */
 	@supports (-webkit-touch-callout: none) {
 		.h-screen {
 			height: -webkit-fill-available;
