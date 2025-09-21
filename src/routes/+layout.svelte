@@ -1,9 +1,11 @@
 <script lang="ts">
+	/* eslint-disable svelte/no-navigation-without-resolve */
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { StatusBar, Style } from '@capacitor/status-bar';
 	import { Capacitor } from '@capacitor/core';
-	import { initializeAuth, setupAuthListener } from '$lib/stores/auth';
+	import { setupAuthListener } from '$lib/stores/auth';
+	import { logger } from '$lib/logger';
 	import '../app.css';
 
 	$: currentPath = $page.url.pathname;
@@ -24,7 +26,9 @@
 			try {
 				await StatusBar.setStyle({ style: Style.Default });
 			} catch (error) {
-				console.error('StatusBar error:', error);
+				logger.error('StatusBar error', {
+					error: error instanceof Error ? error.message : String(error)
+				});
 			}
 		}
 	});
@@ -41,7 +45,7 @@
 
 	<nav class="border-t border-gray-200 bg-white shadow-lg">
 		<div class="pb-safe-bottom flex">
-			{#each navItems as item}
+			{#each navItems as item (item.href)}
 				<a
 					href={item.href}
 					aria-label={item.label}

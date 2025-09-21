@@ -1,6 +1,3 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from 'eslint-plugin-storybook';
-
 import prettier from 'eslint-config-prettier';
 import { fileURLToPath } from 'node:url';
 import { includeIgnoreFile } from '@eslint/compat';
@@ -26,8 +23,30 @@ export default defineConfig(
 		},
 		rules: {
 			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
-			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-			'no-undef': 'off'
+			'no-undef': 'off',
+
+			// General JavaScript/TypeScript rules
+			'no-console': 'warn',
+			'no-debugger': 'error',
+			'no-alert': 'error',
+			'no-var': 'error',
+			'prefer-const': 'error',
+			'prefer-arrow-callback': 'error',
+			'arrow-spacing': 'error',
+			'no-duplicate-imports': 'error',
+			'no-unused-vars': 'off', // Use TypeScript version instead
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{
+					argsIgnorePattern: '^_',
+					varsIgnorePattern: '^_',
+					caughtErrorsIgnorePattern: '^_'
+				}
+			],
+			'@typescript-eslint/no-explicit-any': 'warn',
+			'@typescript-eslint/no-non-null-assertion': 'warn',
+			'@typescript-eslint/consistent-type-imports': 'error',
+			'@typescript-eslint/no-import-type-side-effects': 'error'
 		}
 	},
 	{

@@ -19,6 +19,7 @@ PUBLIC_SUPABASE_ANON_KEY=dein_supabase_anon_key
 ## 3. Google OAuth konfigurieren
 
 ### Google Cloud Console
+
 1. Gehe zur [Google Cloud Console](https://console.cloud.google.com/)
 2. Erstelle ein neues Projekt oder wähle ein bestehendes aus
 3. Aktiviere die Google+ API
@@ -29,6 +30,7 @@ PUBLIC_SUPABASE_ANON_KEY=dein_supabase_anon_key
    - `http://localhost:54321/auth/v1/callback` (für lokale Entwicklung)
 
 ### Supabase Dashboard
+
 1. Gehe zu Authentication → Providers in deinem Supabase Dashboard
 2. Aktiviere Google Provider
 3. Füge deine Google Client ID und Client Secret ein
@@ -37,6 +39,7 @@ PUBLIC_SUPABASE_ANON_KEY=dein_supabase_anon_key
 ## 4. Apple OAuth konfigurieren
 
 ### Apple Developer Portal
+
 1. Gehe zum [Apple Developer Portal](https://developer.apple.com/)
 2. Erstelle eine neue App ID mit "Sign In with Apple" Capability
 3. Erstelle eine Service ID für Web Authentication
@@ -44,6 +47,7 @@ PUBLIC_SUPABASE_ANON_KEY=dein_supabase_anon_key
    - `https://dein-supabase-projekt.supabase.co/auth/v1/callback`
 
 ### Supabase Dashboard
+
 1. Gehe zu Authentication → Providers in deinem Supabase Dashboard
 2. Aktiviere Apple Provider
 3. Füge deine Apple Client ID und Client Secret ein
@@ -92,8 +96,8 @@ Für die Capacitor Mobile App:
 ## Nächste Schritte
 
 Nach der erfolgreichen Konfiguration kannst du:
+
 - Benutzerprofile erweitern
 - Rollen und Berechtigungen hinzufügen
 - Datenbank-Schema für deine App erstellen
 - Push-Benachrichtigungen implementieren
-

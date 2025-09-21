@@ -1,31 +1,33 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
-  import { supabase } from '$lib/supabase/client';
-  import { authStore } from '$lib/stores/auth';
-  import type { PageData } from './$types';
+	// import { goto } from '$app/navigation';
+	// import { supabase } from '$lib/supabase/client';
+	// import { authStore } from '$lib/stores/auth';
+	import { logger } from '$lib/logger';
+	import type { PageData } from './$types';
 
-  export let data: PageData;
+	export let data: PageData;
 
-  let isLoggingOut = false;
+	let isLoggingOut = false;
 
-  async function handleLogout() {
-    if (isLoggingOut) return; // Prevent double clicks
-    
-    isLoggingOut = true;
-    
-    try {
-      console.log('Redirecting to logout route...');
-      // Simply redirect to logout route - let it handle everything
-      window.location.href = '/logout';
-    } catch (error) {
-      console.error('Logout redirect error:', error);
-      // Fallback redirect
-      window.location.href = '/login';
-    } finally {
-      isLoggingOut = false;
-    }
-  }
+	async function handleLogout() {
+		if (isLoggingOut) return; // Prevent double clicks
 
+		isLoggingOut = true;
+
+		try {
+			logger.navigation('Redirecting to logout route...');
+			// Simply redirect to logout route - let it handle everything
+			window.location.href = '/logout';
+		} catch (error) {
+			logger.error('Logout redirect error', {
+				error: error instanceof Error ? error.message : String(error)
+			});
+			// Fallback redirect
+			window.location.href = '/login';
+		} finally {
+			isLoggingOut = false;
+		}
+	}
 </script>
 
 <div class="min-h-full bg-gray-50">
@@ -120,10 +122,10 @@
 					<button class="w-full rounded-lg bg-gray-100 py-3 text-gray-700 hover:bg-gray-200">
 						Export Data
 					</button>
-					<button 
+					<button
 						on:click={handleLogout}
 						disabled={isLoggingOut}
-						class="w-full rounded-lg py-3 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+						class="w-full rounded-lg py-3 text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50
 						       {isLoggingOut ? 'bg-red-400' : 'bg-red-500 hover:bg-red-600'}"
 					>
 						{isLoggingOut ? 'Wird abgemeldet...' : 'Abmelden'}
