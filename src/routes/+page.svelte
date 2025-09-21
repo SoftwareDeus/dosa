@@ -1,26 +1,26 @@
-<div class="bg-gray-50 min-h-full">
+<div class="min-h-full bg-gray-50">
 	<div class="p-6">
-		<h1 class="text-3xl font-bold text-gray-900 mb-6">Home</h1>
-		
+		<h1 class="mb-6 text-3xl font-bold text-gray-900">Home</h1>
+
 		<div class="space-y-4">
-			<div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-				<h2 class="text-xl font-semibold mb-3 text-gray-800">Welcome to UseIt</h2>
+			<div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+				<h2 class="mb-3 text-xl font-semibold text-gray-800">Welcome to UseIt</h2>
 				<p class="text-gray-600">Your personal item management app.</p>
 			</div>
 
 			<div class="grid grid-cols-2 gap-4">
-				<div class="bg-blue-500 text-white rounded-xl p-4">
+				<div class="rounded-xl bg-blue-500 p-4 text-white">
 					<div class="text-2xl font-bold">24</div>
 					<div class="text-sm opacity-90">Total Items</div>
 				</div>
-				<div class="bg-green-500 text-white rounded-xl p-4">
+				<div class="rounded-xl bg-green-500 p-4 text-white">
 					<div class="text-2xl font-bold">3</div>
 					<div class="text-sm opacity-90">Categories</div>
 				</div>
 			</div>
 
-			<div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-				<h3 class="text-lg font-semibold mb-3">Recent Activity</h3>
+			<div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+				<h3 class="mb-3 text-lg font-semibold">Recent Activity</h3>
 				<div class="space-y-2">
 					<div class="flex items-center justify-between py-2">
 						<span class="text-gray-700">Coffee Maker</span>
