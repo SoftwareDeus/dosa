@@ -1,14 +1,17 @@
 import type { PageLoad } from './$types';
-import { goto } from '$app/navigation';
-import { createClient } from '@supabase/supabase-js';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { redirect } from '@sveltejs/kit';
 
-export const load: PageLoad = async ({ url }: { url: URL }) => {
-  const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
-  const { data: { user } } = await supabase.auth.getUser();
+export const load: PageLoad = async ({ url, parent }) => {
+  // Get user from server-side auth (set by withSupabase)
+  const { user } = await parent();
+  
   if (!user) {
+    // Redirect to login if not authenticated
     const next = encodeURIComponent(url.pathname + url.search);
-    goto(`/login?next=${next}`);
+    throw redirect(303, `/login?next=${next}`);
   }
-  return {};
+  
+  return {
+    user: { id: user.id, email: user.email }
+  };
 };

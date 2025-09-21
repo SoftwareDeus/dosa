@@ -1,21 +1,31 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { signOut } from '$lib/stores/auth';
+  import { supabase } from '$lib/supabase/client';
+  import { authStore } from '$lib/stores/auth';
   import type { PageData } from './$types';
 
   export let data: PageData;
 
+  let isLoggingOut = false;
+
   async function handleLogout() {
+    if (isLoggingOut) return; // Prevent double clicks
+    
+    isLoggingOut = true;
+    
     try {
-      await signOut();
-      // Redirect to login page
-      goto('/login');
+      console.log('Redirecting to logout route...');
+      // Simply redirect to logout route - let it handle everything
+      window.location.href = '/logout';
     } catch (error) {
-      console.error('Logout error:', error);
-      // Still redirect to login even if there's an error
-      goto('/login');
+      console.error('Logout redirect error:', error);
+      // Fallback redirect
+      window.location.href = '/login';
+    } finally {
+      isLoggingOut = false;
     }
   }
+
 </script>
 
 <div class="min-h-full bg-gray-50">
@@ -112,9 +122,11 @@
 					</button>
 					<button 
 						on:click={handleLogout}
-						class="w-full rounded-lg bg-red-500 py-3 text-white hover:bg-red-600 transition-colors"
+						disabled={isLoggingOut}
+						class="w-full rounded-lg py-3 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+						       {isLoggingOut ? 'bg-red-400' : 'bg-red-500 hover:bg-red-600'}"
 					>
-						Abmelden
+						{isLoggingOut ? 'Wird abgemeldet...' : 'Abmelden'}
 					</button>
 				</div>
 			</div>

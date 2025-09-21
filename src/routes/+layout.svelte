@@ -17,8 +17,7 @@
 	];
 
 	onMount(async () => {
-		// Initialize secure authentication
-		await initializeAuth();
+		// Only setup auth listener, don't initialize here
 		setupAuthListener();
 
 		if (Capacitor.isNativePlatform?.()) {

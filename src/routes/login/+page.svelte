@@ -57,7 +57,18 @@
   let isIOS = false;
   let showAppleSignIn = true;
 
-  onMount(() => {
+  onMount(async () => {
+    // Wait a bit for auth to initialize
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Check if user is already authenticated
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      console.log('User already authenticated, redirecting to app');
+      goto('/app');
+      return;
+    }
+    
     // Check if we're on iOS for Apple Sign In
     isIOS = Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
     
