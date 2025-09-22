@@ -5,7 +5,6 @@
 	import { onMount } from 'svelte';
 	import { Capacitor } from '@capacitor/core';
 	import { supabase } from '$lib/supabase/client';
-	import { authStore } from '$lib/stores/auth';
 	import { logger } from '$lib/logger';
 
 	export let form: { message?: string } | undefined;
