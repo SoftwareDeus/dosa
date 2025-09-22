@@ -5,7 +5,8 @@
 	import { onMount } from 'svelte';
 	import { Capacitor } from '@capacitor/core';
 	import { supabase } from '$lib/supabase/client';
-	import { logger } from '$lib/logger';
+    import { logger } from '$lib/logger';
+    import { m } from '$lib/paraglide/messages.js';
 
 	export let form: { message?: string } | undefined;
 	export let data: { error?: string; message?: string } = {};
@@ -20,7 +21,7 @@
 	async function signInWithGoogle() {
 		isLoading = true;
 		try {
-			const next = $page.url.searchParams.get('next') || '/app';
+            const next = $page.url.searchParams.get('next') || '/app';
 			const options: any = {
 				redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
 				flowType: 'pkce'
@@ -56,13 +57,13 @@
 				error: error instanceof Error ? error.message : String(error)
 			});
 			// Show error message to user
-			form = { message: 'Apple Sign In fehlgeschlagen. Bitte versuche es erneut.' };
+            form = { message: m.login_apple() };
 		} finally {
 			isLoading = false;
 		}
 	}
 
-	let isIOS = false;
+    let isIOS = false;
 	let showAppleSignIn = true;
 
 	onMount(async () => {
@@ -86,14 +87,14 @@
 	<div class="w-full max-w-md">
 		<div class="rounded-xl bg-white p-8 shadow-lg">
 			<!-- Header -->
-			<div class="mb-8 text-center">
-				<h1 class="mb-2 text-3xl font-bold text-gray-900">
-					{isLogin ? 'Willkommen zurück' : 'Konto erstellen'}
-				</h1>
-				<p class="text-gray-600">
-					{isLogin ? 'Melde dich in deinem Konto an' : 'Erstelle ein neues Konto'}
-				</p>
-			</div>
+            <div class="mb-8 text-center">
+                <h1 class="mb-2 text-3xl font-bold text-gray-900">
+                    {isLogin ? m.login_title_login() : m.login_title_register()}
+                </h1>
+                <p class="text-gray-600">
+                    {isLogin ? m.login_sub_login() : m.login_sub_register()}
+                </p>
+            </div>
 
 			<!-- Error Message -->
 			{#if form?.message || data?.error || data?.message}
@@ -154,7 +155,7 @@
 					<div class="w-full border-t border-gray-300"></div>
 				</div>
 				<div class="relative flex justify-center text-sm">
-					<span class="bg-white px-2 text-gray-500">oder</span>
+                    <span class="bg-white px-2 text-gray-500">{m.or()}</span>
 				</div>
 			</div>
 
@@ -164,23 +165,23 @@
 
 				<div class="space-y-4">
 					<div>
-						<label for="email" class="mb-1 block text-sm font-medium text-gray-700">
-							E-Mail-Adresse
-						</label>
-						<input
+                        <label for="email" class="mb-1 block text-sm font-medium text-gray-700">
+                            {m.email_label()}
+                        </label>
+                        <input
 							id="email"
 							name="email"
 							type="email"
 							required
 							class="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-							placeholder="deine@email.com"
+                            placeholder={m.email_placeholder()}
 						/>
 					</div>
 
 					<div>
-						<label for="password" class="mb-1 block text-sm font-medium text-gray-700">
-							Passwort
-						</label>
+                        <label for="password" class="mb-1 block text-sm font-medium text-gray-700">
+                            {m.password_label()}
+                        </label>
 						<input
 							id="password"
 							name="password"
@@ -193,9 +194,9 @@
 
 					{#if !isLogin}
 						<div>
-							<label for="confirmPassword" class="mb-1 block text-sm font-medium text-gray-700">
-								Passwort bestätigen
-							</label>
+                            <label for="confirmPassword" class="mb-1 block text-sm font-medium text-gray-700">
+                                {m.password_confirm_label()}
+                            </label>
 							<input
 								id="confirmPassword"
 								name="confirmPassword"
@@ -213,14 +214,14 @@
 					disabled={isLoading}
 					class="mt-6 w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
 				>
-					{isLoading ? 'Wird verarbeitet...' : isLogin ? 'Anmelden' : 'Registrieren'}
+                    {isLoading ? m.processing() : isLogin ? m.btn_login() : m.btn_register()}
 				</button>
 			</form>
 
 			<!-- Toggle Mode -->
 			<div class="mt-6 text-center">
-				<button on:click={toggleMode} class="text-sm font-medium text-blue-600 hover:text-blue-700">
-					{isLogin ? 'Noch kein Konto? Jetzt registrieren' : 'Bereits ein Konto? Jetzt anmelden'}
+                <button on:click={toggleMode} class="text-sm font-medium text-blue-600 hover:text-blue-700">
+                    {isLogin ? m.toggle_to_register() : m.toggle_to_login()}
 				</button>
 			</div>
 		</div>

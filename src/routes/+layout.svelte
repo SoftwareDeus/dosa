@@ -18,13 +18,14 @@
 
 	$: currentPath = $page.url.pathname;
 
-	type NavItem = { href: string; icon: string; label: string };
-	const navItems: NavItem[] = [
-		{ href: '/', icon: '🏠', label: 'Home' },
-		{ href: '/app/explore', icon: '🔍', label: 'Explore' },
-		{ href: '/app/favorites', icon: '❤️', label: 'Favorites' },
-		{ href: '/app/profile', icon: '👤', label: 'Profile' }
-	];
+    import { m } from '$lib/paraglide/messages.js';
+    type NavItem = { href: string; icon: string; label: string };
+    const navItems: NavItem[] = [
+        { href: '/', icon: '🏠', label: m.nav_home() },
+        { href: '/app/explore', icon: '🔍', label: m.nav_explore() },
+        { href: '/app/favorites', icon: '❤️', label: m.nav_favorites() },
+        { href: '/app/profile', icon: '👤', label: m.nav_profile() }
+    ];
 
 	onMount(async () => {
 		// Only setup auth listener, don't initialize here
@@ -63,12 +64,12 @@
 					</div>
 					<span class="text-sm text-gray-700">{data.user.email}</span>
 				</div>
-				<a 
-					href="/logout" 
-					class="text-xs text-gray-500 hover:text-red-600 transition-colors"
-				>
-					Logout
-				</a>
+                <a 
+                    href="/logout" 
+                    class="text-xs text-gray-500 hover:text-red-600 transition-colors"
+                >
+                    {m.user_bar_logout()}
+                </a>
 			</div>
 		</div>
 	{/if}
