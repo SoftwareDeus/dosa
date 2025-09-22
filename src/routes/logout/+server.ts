@@ -1,6 +1,8 @@
 import { redirect, type RequestHandler } from '@sveltejs/kit';
 import { logger } from '$lib/logger';
 
+export const prerender = false;
+
 export const GET: RequestHandler = async ({ locals, cookies, url: _url }) => {
 	try {
 		logger.auth('Logout route called - starting logout process');

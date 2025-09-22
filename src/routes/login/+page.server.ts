@@ -1,6 +1,8 @@
 import type { PageServerLoad, Actions } from './$types';
 import { redirect, fail } from '@sveltejs/kit';
 
+export const prerender = false;
+
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
 		const next = event.url.searchParams.get('next') || '/app';
