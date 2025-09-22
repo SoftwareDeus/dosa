@@ -4,8 +4,16 @@ import { redirect, fail } from '@sveltejs/kit';
 export const prerender = false;
 
 export const load: PageServerLoad = async (event) => {
+	console.log('🔍 Login page load:', { 
+		hasUser: !!event.locals.user, 
+		hasSession: !!event.locals.session,
+		url: event.url.pathname + event.url.search,
+		cookies: event.cookies.getAll().map(c => c.name)
+	});
+	
 	if (event.locals.user) {
 		const next = event.url.searchParams.get('next') || '/app';
+		console.log('🚀 User found, redirecting to:', next);
 		throw redirect(303, next);
 	}
 

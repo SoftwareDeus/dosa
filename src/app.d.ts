@@ -8,6 +8,12 @@ declare global {
 			session: Session | null;
 			supabase: ReturnType<typeof createServerClient>;
 		}
+		interface PageData {
+			user?: {
+				id: string;
+				email: string;
+			} | null;
+		}
 	}
 }
 export {};

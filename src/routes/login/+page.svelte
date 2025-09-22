@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { Capacitor } from '@capacitor/core';
 	import { supabase } from '$lib/supabase/client';
+	import { authStore } from '$lib/stores/auth';
 	import { logger } from '$lib/logger';
 
 	export let form: { message?: string } | undefined;
@@ -19,11 +21,14 @@
 	async function signInWithGoogle() {
 		isLoading = true;
 		try {
+			const next = $page.url.searchParams.get('next') || '/app';
+			const options: any = {
+				redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+				flowType: 'pkce'
+			};
 			const { error } = await supabase.auth.signInWithOAuth({
 				provider: 'google',
-				options: {
-					redirectTo: `${window.location.origin}/auth/callback`
-				}
+				options
 			});
 			if (error) throw error;
 		} catch (error) {
@@ -38,11 +43,12 @@
 	async function signInWithApple() {
 		isLoading = true;
 		try {
+			const next = $page.url.searchParams.get('next') || '/app';
 			// Use web OAuth for Apple Sign In
 			const { error } = await supabase.auth.signInWithOAuth({
 				provider: 'apple',
 				options: {
-					redirectTo: `${window.location.origin}/auth/callback`
+					redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`
 				}
 			});
 			if (error) throw error;
@@ -61,20 +67,6 @@
 	let showAppleSignIn = true;
 
 	onMount(async () => {
-		// Wait a bit for auth to initialize
-		await new Promise((resolve) => setTimeout(resolve, 100));
-
-		// Check if user is already authenticated
-		const {
-			data: { user }
-		} = await supabase.auth.getUser();
-		if (user) {
-			logger.navigation('User already authenticated, redirecting to app');
-			// eslint-disable-next-line svelte/no-navigation-without-resolve
-			goto('/app');
-			return;
-		}
-
 		// Check if we're on iOS for Apple Sign In
 		isIOS = Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
 

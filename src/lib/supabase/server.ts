@@ -32,9 +32,24 @@ export const withSupabase: Handle = async ({ event, resolve }) => {
 	const {
 		data: { session }
 	} = await supabase.auth.getSession();
-	const {
-		data: { user }
-	} = await supabase.auth.getUser();
+	
+	let user = null;
+	if (session) {
+		// If we have a session, try to get the user
+		const { data: userData } = await supabase.auth.getUser();
+		user = userData.user;
+	}
+
+	// Debug log for OAuth issues
+	if (event.url.pathname.includes('/login') || event.url.pathname.includes('/auth/callback')) {
+		console.log('🔧 withSupabase:', {
+			path: event.url.pathname,
+			hasSession: !!session,
+			hasUser: !!user,
+			sessionUser: session?.user?.email,
+			cookieCount: event.cookies.getAll().length
+		});
+	}
 
 	event.locals.supabase = supabase;
 	event.locals.session = session ?? null;

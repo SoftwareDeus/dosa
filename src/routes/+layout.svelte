@@ -6,7 +6,15 @@
 	import { Capacitor } from '@capacitor/core';
 	import { setupAuthListener } from '$lib/stores/auth';
 	import { logger } from '$lib/logger';
+	import type { LayoutData } from './$types';
 	import '../app.css';
+
+	export let data: LayoutData & {
+		user?: {
+			id: string;
+			email: string;
+		} | null;
+	};
 
 	$: currentPath = $page.url.pathname;
 
@@ -42,6 +50,28 @@
 	<main class="flex-1 overflow-y-auto">
 		<slot />
 	</main>
+
+	<!-- User info bar (only show if authenticated) -->
+	{#if data.user}
+		<div class="border-t border-gray-100 bg-gray-50 px-4 py-2">
+			<div class="flex items-center justify-between">
+				<div class="flex items-center space-x-2">
+					<div class="h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center">
+						<span class="text-xs font-medium text-white">
+							{data.user.email.charAt(0).toUpperCase()}
+						</span>
+					</div>
+					<span class="text-sm text-gray-700">{data.user.email}</span>
+				</div>
+				<a 
+					href="/logout" 
+					class="text-xs text-gray-500 hover:text-red-600 transition-colors"
+				>
+					Logout
+				</a>
+			</div>
+		</div>
+	{/if}
 
 	<nav class="border-t border-gray-200 bg-white shadow-lg">
 		<div class="pb-safe-bottom flex">
