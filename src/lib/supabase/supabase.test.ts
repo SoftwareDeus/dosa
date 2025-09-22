@@ -100,7 +100,7 @@ describe('Supabase Integration Tests', () => {
 		it('should generate Google OAuth URL', async () => {
 			mockSupabase.auth.signInWithOAuth.mockResolvedValue({
 				data: {
-					url: 'https://mammexsdwfylvjsvxmnk.supabase.co/auth/v1/authorize?provider=google&redirect_to=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback'
+					url: 'https://test-project.supabase.co/auth/v1/authorize?provider=google&redirect_to=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback'
 				},
 				error: null
 			});
@@ -121,7 +121,7 @@ describe('Supabase Integration Tests', () => {
 		it('should generate Apple OAuth URL', async () => {
 			mockSupabase.auth.signInWithOAuth.mockResolvedValue({
 				data: {
-					url: 'https://mammexsdwfylvjsvxmnk.supabase.co/auth/v1/authorize?provider=apple&redirect_to=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback'
+					url: 'https://test-project.supabase.co/auth/v1/authorize?provider=apple&redirect_to=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback'
 				},
 				error: null
 			});

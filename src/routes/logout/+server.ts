@@ -15,14 +15,18 @@ export const GET: RequestHandler = async ({ locals, cookies, url: _url }) => {
 			logger.auth('Supabase logout successful');
 		}
 
+		// Get Supabase project reference from URL
+		const supabaseUrl = locals.supabase.supabaseUrl;
+		const projectRef = supabaseUrl.split('//')[1]?.split('.')[0] || 'supabase';
+		
 		const cookieNames = [
 			'sb-access-token',
 			'sb-refresh-token',
 			'sb-provider-token',
 			'sb-provider-refresh-token',
-			'sb-mammexsdwfylvjsvxmnk-auth-token',
-			'sb-mammexsdwfylvjsvxmnk-auth-token.0',
-			'sb-mammexsdwfylvjsvxmnk-auth-token.1'
+			`sb-${projectRef}-auth-token`,
+			`sb-${projectRef}-auth-token.0`,
+			`sb-${projectRef}-auth-token.1`
 		];
 
 		cookieNames.forEach((name) => {
@@ -42,6 +46,13 @@ export const GET: RequestHandler = async ({ locals, cookies, url: _url }) => {
 		logger.navigation('Redirecting to login page');
 		throw redirect(303, '/login');
 	} catch (error) {
+		// Check if this is a redirect (normal SvelteKit behavior)
+		if (error && typeof error === 'object' && 'status' in error && error.status === 303) {
+			// This is a redirect, not an actual error
+			throw error;
+		}
+		
+		// This is a real error
 		logger.error('Logout error', { error: error instanceof Error ? error.message : String(error) });
 		throw redirect(303, '/login');
 	}
