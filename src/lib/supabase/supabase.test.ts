@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { HttpStatus } from '../types/http';
 import { getTestCredentials, getTestUser, getTestSession } from '../../test-config';
 
 // Mock the supabase client
@@ -227,7 +228,7 @@ describe('Supabase Integration Tests', () => {
 		it('should handle invalid credentials', async () => {
 			mockSupabase.auth.signInWithPassword.mockResolvedValue({
 				data: { user: null, session: null },
-				error: { message: 'Invalid login credentials', status: 400 }
+				error: { message: 'Invalid login credentials', status: HttpStatus.BAD_REQUEST }
 			});
 
 			const { data, error } = await mockSupabase.auth.signInWithPassword({

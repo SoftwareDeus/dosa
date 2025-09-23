@@ -1,6 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 import { createServerClient } from '@supabase/ssr';
+import { HttpStatus } from '$lib/types/http';
 
 export const GET: RequestHandler = async ({ cookies, url }) => {
 	const supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
@@ -26,7 +27,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 
 	if (!code) {
 		return new Response(null, {
-			status: 303,
+			status: HttpStatus.SEE_OTHER,
 			headers: { Location: '/login?error=auth_failed&message=Missing%20code' }
 		});
 	}
@@ -34,7 +35,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 	const { error } = await supabase.auth.exchangeCodeForSession(code);
 	if (error) {
 		return new Response(null, {
-			status: 303,
+			status: HttpStatus.SEE_OTHER,
 			headers: { Location: `/login?error=auth_failed&message=${encodeURIComponent(error.message)}` }
 		});
 	}
@@ -45,10 +46,10 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 	} = await supabase.auth.getUser();
 	if (!user) {
 		return new Response(null, {
-			status: 303,
+			status: HttpStatus.SEE_OTHER,
 			headers: { Location: '/login?error=auth_failed&message=No%20user' }
 		});
 	}
 
-	return new Response(null, { status: 303, headers: { Location: next } });
+	return new Response(null, { status: HttpStatus.SEE_OTHER, headers: { Location: next } });
 };

@@ -18,7 +18,7 @@ class Logger {
 			? window.location.hostname === 'localhost'
 			: process.env.NODE_ENV === 'development';
 
-	log(level: LogLevel, message: string, context?: LogContext) {
+	log(level: LogLevel, message: string, context?: LogContext): void {
 		const timestamp = new Date().toISOString();
 		const logMessage = `[${timestamp}] ${level.toUpperCase()}: ${message}`;
 
@@ -49,34 +49,34 @@ class Logger {
 		}
 	}
 
-	debug(message: string, context?: LogContext) {
+	debug(message: string, context?: LogContext): void {
 		this.log(LogLevel.DEBUG, message, context);
 	}
 
-	info(message: string, context?: LogContext) {
+	info(message: string, context?: LogContext): void {
 		this.log(LogLevel.INFO, message, context);
 	}
 
-	warn(message: string, context?: LogContext) {
+	warn(message: string, context?: LogContext): void {
 		this.log(LogLevel.WARN, message, context);
 	}
 
-	error(message: string, context?: LogContext) {
+	error(message: string, context?: LogContext): void {
 		this.log(LogLevel.ERROR, message, context);
 	}
 
 	// Auth-specific logging
-	auth(message: string, context?: LogContext) {
+	auth(message: string, context?: LogContext): void {
 		this.info(`[AUTH] ${message}`, context);
 	}
 
 	// Navigation-specific logging
-	navigation(message: string, context?: LogContext) {
+	navigation(message: string, context?: LogContext): void {
 		this.info(`[NAV] ${message}`, context);
 	}
 
 	// API-specific logging
-	api(message: string, context?: LogContext) {
+	api(message: string, context?: LogContext): void {
 		this.info(`[API] ${message}`, context);
 	}
 }

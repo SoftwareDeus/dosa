@@ -1,5 +1,6 @@
 import { redirect, type RequestHandler } from '@sveltejs/kit';
 import { logger } from '$lib/logger';
+import { HttpStatus } from '$lib/types/http';
 
 export const prerender = false;
 
@@ -44,17 +45,22 @@ export const GET: RequestHandler = async ({ locals, cookies, url: _url }) => {
 		logger.auth('All cookies cleared');
 
 		logger.navigation('Redirecting to login page');
-		throw redirect(303, '/login');
+		throw redirect(HttpStatus.SEE_OTHER, '/login');
 	} catch (error) {
 		// Check if this is a redirect (normal SvelteKit behavior)
-		if (error && typeof error === 'object' && 'status' in error && error.status === 303) {
+		if (
+			error &&
+			typeof error === 'object' &&
+			'status' in error &&
+			error.status === HttpStatus.SEE_OTHER
+		) {
 			// This is a redirect, not an actual error
 			throw error;
 		}
 
 		// This is a real error
 		logger.error('Logout error', { error: error instanceof Error ? error.message : String(error) });
-		throw redirect(303, '/login');
+		throw redirect(HttpStatus.SEE_OTHER, '/login');
 	}
 };
 

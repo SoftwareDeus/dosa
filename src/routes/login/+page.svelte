@@ -13,11 +13,11 @@
 	let isLogin = true;
 	let isLoading = false;
 
-	function toggleMode() {
+	function toggleMode(): void {
 		isLogin = !isLogin;
 	}
 
-	async function signInWithGoogle() {
+	async function signInWithGoogle(): Promise<void> {
 		isLoading = true;
 		try {
 			const next = $page.url.searchParams.get('next') || '/app';
@@ -39,7 +39,7 @@
 		}
 	}
 
-	async function signInWithApple() {
+	async function signInWithApple(): Promise<void> {
 		isLoading = true;
 		try {
 			const next = $page.url.searchParams.get('next') || '/app';
@@ -65,7 +65,7 @@
 	let isIOS = false;
 	let showAppleSignIn = true;
 
-	onMount(async () => {
+	onMount(async (): Promise<void> => {
 		// Check if we're on iOS for Apple Sign In
 		isIOS = Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
 

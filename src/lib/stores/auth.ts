@@ -23,7 +23,7 @@ export const authStore = writable<AuthState>(initialState);
 // Initialize auth state (only run once)
 let authInitialized = false;
 
-export async function initializeAuth() {
+export async function initializeAuth(): Promise<void> {
 	if (authInitialized) {
 		logger.debug('Auth already initialized, skipping...');
 		return;
@@ -63,7 +63,7 @@ export async function initializeAuth() {
 }
 
 // Listen to auth changes (only initialize once)
-export function setupAuthListener() {
+export function setupAuthListener(): void {
 	if (authListenerInitialized) {
 		logger.auth('Auth listener already initialized, skipping...');
 		return;
@@ -109,7 +109,7 @@ export function setupAuthListener() {
 }
 
 // Helper functions
-export async function signOut() {
+export async function signOut(): Promise<void> {
 	try {
 		const { error } = await supabase.auth.signOut();
 		if (error) {

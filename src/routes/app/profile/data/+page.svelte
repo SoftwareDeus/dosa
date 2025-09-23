@@ -28,7 +28,7 @@
 	$: phone = google?.phoneNumbers?.[0]?.value ?? '';
 	$: avatarUrl = google?.photos?.[0]?.url ?? '';
 
-	function back() {
+	function back(): void {
 		goto(resolve('/app/profile'));
 	}
 </script>

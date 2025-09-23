@@ -21,8 +21,9 @@
 	let formName = '';
 	let formPhone = '';
 	let formAvatarUrl = '';
+	const JSON_SPACE = 2;
 
-	async function handleLogout() {
+	async function handleLogout(): Promise<void> {
 		if (isLoggingOut) return; // Prevent double clicks
 
 		isLoggingOut = true;
@@ -42,7 +43,7 @@
 		}
 	}
 
-	async function fetchData() {
+	async function fetchData(): Promise<void> {
 		loadingData = true;
 		loadError = null;
 		try {
@@ -65,12 +66,12 @@
 		}
 	}
 
-	function _toggleData() {
+	function _toggleData(): void {
 		showData = !showData;
 		if (showData && !me && !loadingData) fetchData();
 	}
 
-	async function saveProfile() {
+	async function saveProfile(): Promise<void> {
 		// Placeholder: hook into your backend/update route if available
 		// For now, just close edit mode
 		isEditing = false;
@@ -214,13 +215,13 @@
 						<pre class="mb-4 overflow-auto rounded bg-gray-50 p-3 text-xs">{JSON.stringify(
 								me.user,
 								null,
-								2
+								JSON_SPACE
 							)}</pre>
 						<h4 class="mb-2 text-sm font-semibold">{m.data_section_google()}</h4>
 						<pre class="mb-4 overflow-auto rounded bg-gray-50 p-3 text-xs">{JSON.stringify(
 								me.google ?? {},
 								null,
-								2
+								JSON_SPACE
 							)}</pre>
 
 						<div class="mt-4">

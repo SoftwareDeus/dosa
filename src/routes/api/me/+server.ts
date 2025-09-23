@@ -1,4 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
+import { HttpStatus } from '$lib/types/http';
 
 // Aggregates Supabase session/user info and Google profile data if available
 export const GET: RequestHandler = async ({ locals }) => {
@@ -57,7 +58,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 	} catch (error) {
 		return json(
 			{ ok: false, error: error instanceof Error ? error.message : 'Unknown error' },
-			{ status: 500 }
+			{ status: HttpStatus.INTERNAL_SERVER_ERROR }
 		);
 	}
 };

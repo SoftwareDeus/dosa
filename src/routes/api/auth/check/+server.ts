@@ -1,4 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
+import { HttpStatus } from '$lib/types/http';
 
 export const GET: RequestHandler = async ({ locals }) => {
 	try {
@@ -15,11 +16,11 @@ export const GET: RequestHandler = async ({ locals }) => {
 			return json({ authenticated: true, user: { id: user.id, email: user.email } });
 		}
 
-		return json({ authenticated: false }, { status: 401 });
+		return json({ authenticated: false }, { status: HttpStatus.UNAUTHORIZED });
 	} catch (error) {
 		return json(
 			{ authenticated: false, error: error instanceof Error ? error.message : 'Unknown error' },
-			{ status: 500 }
+			{ status: HttpStatus.INTERNAL_SERVER_ERROR }
 		);
 	}
 };

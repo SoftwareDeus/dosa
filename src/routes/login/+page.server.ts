@@ -1,12 +1,13 @@
 import type { PageServerLoad, Actions } from './$types';
 import { redirect, fail } from '@sveltejs/kit';
+import { HttpStatus } from '$lib/types/http';
 
 export const prerender = false;
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
 		const next = event.url.searchParams.get('next') || '/app';
-		throw redirect(303, next);
+		throw redirect(HttpStatus.SEE_OTHER, next);
 	}
 
 	// Handle OAuth errors
@@ -27,25 +28,30 @@ export const actions: Actions = {
 		const password = String(form.get('password') ?? '');
 		const confirmPassword = String(form.get('confirmPassword') ?? '');
 
-		if (!email || !password) return fail(400, { message: 'Email und Passwort erforderlich' });
+		if (!email || !password)
+			return fail(HttpStatus.BAD_REQUEST, { message: 'Email und Passwort erforderlich' });
 
 		// Validate email format
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailRegex.test(email)) {
-			return fail(400, { message: 'Bitte gib eine gültige E-Mail-Adresse ein' });
+			return fail(HttpStatus.BAD_REQUEST, { message: 'Bitte gib eine gültige E-Mail-Adresse ein' });
 		}
 
 		// Validate password strength
-		if (password.length < 6) {
-			return fail(400, { message: 'Passwort muss mindestens 6 Zeichen lang sein' });
+		const MIN_PASSWORD_LENGTH = 6;
+		if (password.length < MIN_PASSWORD_LENGTH) {
+			return fail(HttpStatus.BAD_REQUEST, {
+				message: 'Passwort muss mindestens 6 Zeichen lang sein'
+			});
 		}
 
 		if (action === 'register') {
 			// Registration logic
-			if (!confirmPassword) return fail(400, { message: 'Passwort-Bestätigung erforderlich' });
+			if (!confirmPassword)
+				return fail(HttpStatus.BAD_REQUEST, { message: 'Passwort-Bestätigung erforderlich' });
 
 			if (password !== confirmPassword) {
-				return fail(400, { message: 'Passwörter stimmen nicht überein' });
+				return fail(HttpStatus.BAD_REQUEST, { message: 'Passwörter stimmen nicht überein' });
 			}
 
 			const { data, error } = await event.locals.supabase.auth.signUp({
@@ -59,21 +65,23 @@ export const actions: Actions = {
 			if (error) {
 				// Handle specific Supabase errors
 				if (error.message.includes('already registered')) {
-					return fail(400, { message: 'Diese E-Mail-Adresse ist bereits registriert' });
+					return fail(HttpStatus.BAD_REQUEST, {
+						message: 'Diese E-Mail-Adresse ist bereits registriert'
+					});
 				}
-				return fail(400, { message: error.message });
+				return fail(HttpStatus.BAD_REQUEST, { message: error.message });
 			}
 
 			if (data.user && !data.session) {
 				// Email confirmation required
-				return fail(200, {
+				return fail(HttpStatus.OK, {
 					message: 'Bitte überprüfe deine E-Mails und klicke auf den Bestätigungslink'
 				});
 			}
 
 			// User is automatically signed in after registration
 			const next = event.url.searchParams.get('next') || '/app';
-			throw redirect(303, next);
+			throw redirect(HttpStatus.SEE_OTHER, next);
 		} else {
 			// Login logic
 			const { data: _data, error } = await event.locals.supabase.auth.signInWithPassword({
@@ -84,16 +92,18 @@ export const actions: Actions = {
 			if (error) {
 				// Handle specific Supabase errors
 				if (error.message.includes('Invalid login credentials')) {
-					return fail(401, { message: 'Ungültige Anmeldedaten' });
+					return fail(HttpStatus.UNAUTHORIZED, { message: 'Ungültige Anmeldedaten' });
 				}
 				if (error.message.includes('Email not confirmed')) {
-					return fail(401, { message: 'Bitte bestätige zuerst deine E-Mail-Adresse' });
+					return fail(HttpStatus.UNAUTHORIZED, {
+						message: 'Bitte bestätige zuerst deine E-Mail-Adresse'
+					});
 				}
-				return fail(401, { message: error.message });
+				return fail(HttpStatus.UNAUTHORIZED, { message: error.message });
 			}
 
 			const next = event.url.searchParams.get('next') || '/app';
-			throw redirect(303, next);
+			throw redirect(HttpStatus.SEE_OTHER, next);
 		}
 	}
 };

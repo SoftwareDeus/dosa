@@ -27,7 +27,7 @@ export const testConfig = {
 };
 
 // Helper function to get test credentials
-export function getTestCredentials() {
+export function getTestCredentials(): { email: string; password: string } {
 	return {
 		email: testConfig.email,
 		password: testConfig.password
@@ -35,11 +35,11 @@ export function getTestCredentials() {
 }
 
 // Helper function to get test user data
-export function getTestUser() {
+export function getTestUser(): { id: string; email: string; created_at: string } {
 	return testConfig.user;
 }
 
 // Helper function to get test session data
-export function getTestSession() {
+export function getTestSession(): { access_token: string; refresh_token: string } {
 	return testConfig.session;
 }

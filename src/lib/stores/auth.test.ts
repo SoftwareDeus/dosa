@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+const EXPIRES_IN_SECONDS = 3600;
 import { get } from 'svelte/store';
 
 // Mock the supabase client
@@ -105,7 +106,7 @@ describe('Auth Store Tests', () => {
 			const mockSession = {
 				access_token: 'token',
 				refresh_token: 'refresh_token',
-				expires_in: 3600,
+				expires_in: EXPIRES_IN_SECONDS,
 				token_type: 'bearer',
 				user: mockUser
 			};

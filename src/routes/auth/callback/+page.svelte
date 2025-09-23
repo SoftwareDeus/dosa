@@ -2,9 +2,10 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 
-	onMount(async () => {
+	onMount(async (): Promise<void> => {
 		// Parse URL hash for implicit tokens
-		const hash = new URLSearchParams(window.location.hash.slice(1));
+		const FIRST_CHAR_INDEX = 1;
+		const hash = new URLSearchParams(window.location.hash.slice(FIRST_CHAR_INDEX));
 		const access_token = hash.get('access_token') || undefined;
 		const refresh_token =
 			hash.get('refresh_token') || hash.get('provider_refresh_token') || undefined;

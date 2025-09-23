@@ -20,6 +20,7 @@
 
 	import { m } from '$lib/paraglide/messages.js';
 	type NavItem = { href: string; icon: string; label: string };
+	const CHAR_INDEX_ZERO = 0;
 	const navItems: NavItem[] = [
 		{ href: '/', icon: '🏠', label: m.nav_home() },
 		{ href: '/app/explore', icon: '🔍', label: m.nav_explore() },
@@ -27,7 +28,7 @@
 		{ href: '/app/profile', icon: '👤', label: m.nav_profile() }
 	];
 
-	onMount(async () => {
+	onMount(async (): Promise<void> => {
 		// Only setup auth listener, don't initialize here
 		setupAuthListener();
 
@@ -42,7 +43,7 @@
 		}
 	});
 
-	function isActive(href: string) {
+	function isActive(href: string): boolean {
 		return currentPath === href;
 	}
 </script>
@@ -59,7 +60,7 @@
 				<div class="flex items-center space-x-2">
 					<div class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500">
 						<span class="text-xs font-medium text-white">
-							{data.user.email.charAt(0).toUpperCase()}
+							{data.user.email.charAt(CHAR_INDEX_ZERO).toUpperCase()}
 						</span>
 					</div>
 					<span class="text-sm text-gray-700">{data.user.email}</span>

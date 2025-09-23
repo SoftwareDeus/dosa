@@ -1,5 +1,6 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { logger } from '$lib/logger';
+import { HttpStatus } from '$lib/types/http';
 
 export const POST: RequestHandler = async ({ locals, request }) => {
 	try {
@@ -15,7 +16,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 				refresh_token
 			});
 			if (setErr) {
-				return json({ success: false, error: setErr.message }, { status: 401 });
+				return json({ success: false, error: setErr.message }, { status: HttpStatus.UNAUTHORIZED });
 			}
 		}
 
@@ -38,14 +39,17 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 			});
 		}
 
-		return json({ success: false, error: 'No valid session found' }, { status: 401 });
+		return json(
+			{ success: false, error: 'No valid session found' },
+			{ status: HttpStatus.UNAUTHORIZED }
+		);
 	} catch (error) {
 		logger.error('Auth complete error', {
 			error: error instanceof Error ? error.message : String(error)
 		});
 		return json(
 			{ success: false, error: error instanceof Error ? error.message : 'Unknown error' },
-			{ status: 500 }
+			{ status: HttpStatus.INTERNAL_SERVER_ERROR }
 		);
 	}
 };
