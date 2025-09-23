@@ -6,10 +6,20 @@
     import type { PageData } from './$types';
     import { m } from '$lib/paraglide/messages.js';
     import { setLocale } from '$lib/paraglide/runtime';
+    import { onMount } from 'svelte';
 
 	export let data: PageData;
 
 	let isLoggingOut = false;
+    let showData = false;
+    let isEditing = false;
+    let loadingData = false;
+    let loadError: string | null = null;
+    let lastTs = '';
+    let me: any = null;
+    let formName = '';
+    let formPhone = '';
+    let formAvatarUrl = '';
 
 	async function handleLogout() {
 		if (isLoggingOut) return; // Prevent double clicks
@@ -30,6 +40,41 @@
 			isLoggingOut = false;
 		}
 	}
+
+    async function fetchData() {
+        loadingData = true;
+        loadError = null;
+        try {
+            const res = await fetch('/api/me');
+            const j = await res.json();
+            if (!j.ok) throw new Error(j.error || 'failed');
+            me = j.data;
+            lastTs = j.ts;
+            // Pre-fill edit form with best-effort name/phone/avatar
+            const googleName = me?.google?.names?.[0]?.displayName as string | undefined;
+            formName = googleName || data.user.email?.split('@')[0] || '';
+            const googlePhone = me?.google?.phoneNumbers?.[0]?.value as string | undefined;
+            formPhone = googlePhone || '';
+            const googlePhoto = me?.google?.photos?.[0]?.url as string | undefined;
+            formAvatarUrl = googlePhoto || '';
+        } catch (e) {
+            loadError = e instanceof Error ? e.message : String(e);
+        } finally {
+            loadingData = false;
+        }
+    }
+
+    function toggleData() {
+        showData = !showData;
+        if (showData && !me && !loadingData) fetchData();
+    }
+
+    async function saveProfile() {
+        // Placeholder: hook into your backend/update route if available
+        // For now, just close edit mode
+        isEditing = false;
+        alert(m.update_success());
+    }
 </script>
 
 <div class="min-h-full bg-gray-50">
@@ -52,9 +97,9 @@
 						<p class="text-gray-600">{data.user.email}</p>
 					</div>
 				</div>
-                <button class="w-full rounded-lg bg-blue-500 py-2 text-white hover:bg-blue-600">
+                <a href="/app/profile/data" class="block w-full rounded-lg bg-blue-500 py-2 text-center text-white hover:bg-blue-600">
                     {m.profile_edit()}
-                </button>
+                </a>
 			</div>
 
 			<!-- Settings -->
@@ -139,7 +184,7 @@
 
 			<!-- Actions -->
             <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-				<div class="space-y-3">
+                <div class="space-y-3">
                     <button class="w-full rounded-lg bg-gray-100 py-3 text-gray-700 hover:bg-gray-200">
                         {m.profile_export()}
                     </button>
@@ -153,6 +198,49 @@
 					</button>
 				</div>
 			</div>
+
+            {#if showData}
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+                {#if loadingData}
+                    <div class="text-sm text-gray-500">{m.processing()}</div>
+                {:else if loadError}
+                    <div class="text-sm text-red-600">{m.error_loading_data()}</div>
+                {:else if me}
+                    <div class="mb-2 text-xs text-gray-500">{m.data_last_refreshed({ ts: lastTs })}</div>
+                    <h4 class="mb-2 text-sm font-semibold">{m.data_section_account()}</h4>
+                    <pre class="mb-4 overflow-auto rounded bg-gray-50 p-3 text-xs">{JSON.stringify(me.user, null, 2)}</pre>
+                    <h4 class="mb-2 text-sm font-semibold">{m.data_section_google()}</h4>
+                    <pre class="mb-4 overflow-auto rounded bg-gray-50 p-3 text-xs">{JSON.stringify(me.google ?? {}, null, 2)}</pre>
+
+                    <div class="mt-4">
+                        <button class="rounded bg-blue-600 px-3 py-2 text-sm text-white" on:click={() => (isEditing = !isEditing)}>
+                            {m.profile_edit_data()}
+                        </button>
+                    </div>
+
+                    {#if isEditing}
+                    <form class="mt-3 space-y-3" on:submit|preventDefault={saveProfile}>
+                        <div>
+                            <label class="mb-1 block text-sm text-gray-700" for="name">{m.field_name()}</label>
+                            <input id="name" class="w-full rounded border px-2 py-1" bind:value={formName} />
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-sm text-gray-700" for="phone">{m.field_phone()}</label>
+                            <input id="phone" class="w-full rounded border px-2 py-1" bind:value={formPhone} />
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-sm text-gray-700" for="avatar">{m.field_avatar_url()}</label>
+                            <input id="avatar" class="w-full rounded border px-2 py-1" bind:value={formAvatarUrl} />
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="rounded bg-blue-600 px-3 py-2 text-sm text-white" type="submit">{m.profile_save()}</button>
+                            <button class="rounded bg-gray-200 px-3 py-2 text-sm" type="button" on:click={() => (isEditing = false)}>{m.profile_cancel()}</button>
+                        </div>
+                    </form>
+                    {/if}
+                {/if}
+            </div>
+            {/if}
 		</div>
 	</div>
 </div>

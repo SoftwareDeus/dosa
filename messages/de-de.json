@@ -77,5 +77,22 @@
     "processing": "Wird verarbeitet...",
     "profile_language": "Sprache",
     "language_en": "Englisch",
-    "language_de": "Deutsch"
+    "language_de": "Deutsch",
+    "profile_show_data": "Meine Daten anzeigen",
+    "profile_edit_data": "Daten bearbeiten",
+    "profile_save": "Speichern",
+    "profile_cancel": "Abbrechen",
+    "data_section_account": "Kontodaten",
+    "data_section_google": "Google-Daten",
+    "data_last_refreshed": "Zuletzt aktualisiert: {ts}",
+    "error_loading_data": "Daten konnten nicht geladen werden",
+    "update_success": "Profil aktualisiert",
+    "update_error": "Aktualisierung fehlgeschlagen",
+    "field_name": "Name",
+    "field_phone": "Telefon",
+    "field_avatar_url": "Avatar-URL",
+    "data_page_title": "Meine Daten",
+    "data_refresh": "Aktualisieren",
+    "data_google_missing": "Keine Google-Daten vorhanden",
+    "data_back": "Zurück zum Profil"
 }

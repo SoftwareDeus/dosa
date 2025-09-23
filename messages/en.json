@@ -77,5 +77,18 @@
     "processing": "Processing...",
     "profile_language": "Language",
     "language_en": "English",
-    "language_de": "German"
+    "language_de": "German",
+    "profile_show_data": "Show my data",
+    "profile_edit_data": "Edit data",
+    "profile_save": "Save",
+    "profile_cancel": "Cancel",
+    "data_section_account": "Account Data",
+    "data_section_google": "Google Data",
+    "data_last_refreshed": "Last refreshed: {ts}",
+    "error_loading_data": "Could not load data",
+    "update_success": "Profile updated",
+    "update_error": "Update failed",
+    "field_name": "Name",
+    "field_phone": "Phone",
+    "field_avatar_url": "Avatar URL"
 }
