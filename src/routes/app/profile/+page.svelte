@@ -17,11 +17,22 @@
 	let loadingData = false;
 	let loadError: string | null = null;
 	let lastTs = '';
-	let me: Record<string, unknown> | null = null;
+	import type { Json } from '$lib/types/json';
+	let me: Record<string, Json> | null = null;
 	let formName = '';
 	let formPhone = '';
 	let formAvatarUrl = '';
 	const JSON_SPACE = 2;
+
+	type GooglePeople = {
+		names?: Array<{ displayName?: string | null }>;
+		phoneNumbers?: Array<{ value?: string | null }>;
+		photos?: Array<{ url?: string | null }>;
+	};
+
+	function isObjectRecord(value: Json | null): value is { [key: string]: Json } {
+		return typeof value === 'object' && value !== null && !Array.isArray(value);
+	}
 
 	async function handleLogout(): Promise<void> {
 		if (isLoggingOut) return; // Prevent double clicks
@@ -52,12 +63,12 @@
 			if (!j.ok) throw new Error(j.error || 'failed');
 			me = j.data;
 			lastTs = j.ts;
-			// Pre-fill edit form with best-effort name/phone/avatar
-			const googleName = me?.google?.names?.[0]?.displayName as string | undefined;
+			const google = isObjectRecord(me?.google ?? null) ? (me?.google as GooglePeople) : null;
+			const googleName: string | null = google?.names?.[0]?.displayName ?? null;
 			formName = googleName || data.user.email?.split('@')[0] || '';
-			const googlePhone = me?.google?.phoneNumbers?.[0]?.value as string | undefined;
+			const googlePhone: string | null = google?.phoneNumbers?.[0]?.value ?? null;
 			formPhone = googlePhone || '';
-			const googlePhoto = me?.google?.photos?.[0]?.url as string | undefined;
+			const googlePhoto: string | null = google?.photos?.[0]?.url ?? null;
 			formAvatarUrl = googlePhoto || '';
 		} catch (e) {
 			loadError = e instanceof Error ? e.message : String(e);

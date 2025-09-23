@@ -8,9 +8,8 @@ export enum LogLevel {
 	ERROR = 'error'
 }
 
-export interface LogContext {
-	[key: string]: unknown;
-}
+import type { Json } from '$lib/types/json';
+export type LogContext = Record<string, Json>;
 
 class Logger {
 	private isDevelopment =

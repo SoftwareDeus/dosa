@@ -58,6 +58,15 @@ export default defineConfig(
 				{
 					selector: 'TSTypeLiteral[members.length=0]',
 					message: 'Avoid `{}` type. Use Record<string, unknown> or a specific interface.'
+				},
+				{
+					selector: 'TSUnknownKeyword',
+					message: 'Avoid `unknown` in types. Prefer a specific type, Json, or never.'
+				},
+				{
+					selector: 'TSUndefinedKeyword',
+					message:
+						'Do not use `undefined` in types. Prefer optional properties (?), null, or an explicit Optional<T>.'
 				}
 			],
 			'@typescript-eslint/explicit-module-boundary-types': 'error',

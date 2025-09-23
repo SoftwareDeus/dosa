@@ -5,9 +5,9 @@ import { HttpStatus } from '$lib/types/http';
 export const POST: RequestHandler = async ({ locals, request }) => {
 	try {
 		const body = await request.json().catch(() => ({}));
-		const next: string | undefined = body?.next;
-		const access_token: string | undefined = body?.access_token;
-		const refresh_token: string | undefined = body?.refresh_token;
+		const next: string | null = body?.next ?? null;
+		const access_token: string | null = body?.access_token ?? null;
+		const refresh_token: string | null = body?.refresh_token ?? null;
 
 		if (access_token && refresh_token) {
 			// Set session on the server from client-provided tokens (implicit flow)

@@ -5,10 +5,11 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
+	import type { Json } from '$lib/types/json';
 	export let data: PageData & {
 		me: {
 			data?: {
-				google?: Record<string, unknown> | undefined;
+				google?: Record<string, Json> | null;
 				user?: { id?: string; email?: string; created_at?: string; last_sign_in_at?: string };
 				providers?: string[];
 			};
@@ -20,9 +21,38 @@
 	let phone = '';
 	let avatarUrl = '';
 
-	$: google = data.me?.data?.google as Record<string, unknown> | undefined;
-	$: user = data.me?.data?.user;
-	$: ts = data.me?.ts;
+	type GooglePeople = {
+		names?: Array<{ displayName?: string | null }>;
+		emailAddresses?: Array<{ value?: string | null }>;
+		phoneNumbers?: Array<{ value?: string | null }>;
+		genders?: Array<{ value?: string | null }>;
+		birthdays?: Array<{
+			text?: string | null;
+			date?: { year?: number | null; month?: number | null; day?: number | null } | null;
+		}>;
+		locales?: Array<{ value?: string | null }>;
+		organizations?: Array<{ name?: string | null }>;
+		photos?: Array<{ url?: string | null }>;
+	};
+
+	function isGooglePeople(value: Json | null): value is GooglePeople {
+		return typeof value === 'object' && value !== null;
+	}
+
+	let google: GooglePeople | null = null;
+	let user: {
+		id?: string | null;
+		email?: string | null;
+		created_at?: string | null;
+		last_sign_in_at?: string | null;
+	} | null = null;
+	let ts: string | null = null;
+
+	let rawGoogle: Record<string, Json> | null;
+	$: rawGoogle = (data.me?.data?.google ?? null) as Record<string, Json> | null;
+	$: google = isGooglePeople(rawGoogle) ? (rawGoogle as GooglePeople) : null;
+	$: user = (data.me?.data?.user as typeof user) ?? null;
+	$: ts = data.me?.ts ?? null;
 
 	$: name = google?.names?.[0]?.displayName ?? user?.email?.split('@')[0] ?? '';
 	$: phone = google?.phoneNumbers?.[0]?.value ?? '';

@@ -47,7 +47,7 @@ export const withSupabase: Handle = async ({ event, resolve }) => {
 			path: event.url.pathname,
 			hasSession: !!session,
 			hasUser: !!user,
-			sessionUser: session?.user?.email,
+			sessionUser: session?.user?.email ?? null,
 			cookieCount: event.cookies.getAll().length
 		});
 	}

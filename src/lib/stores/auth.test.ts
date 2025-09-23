@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, type MockInstance } from 'vitest';
 const EXPIRES_IN_SECONDS = 3600;
 import { get } from 'svelte/store';
 
@@ -18,14 +18,20 @@ vi.mock('$lib/supabase/client', () => ({
 import { authStore, initializeAuth, setupAuthListener, signOut } from './auth';
 
 describe('Auth Store Tests', () => {
-	let mockSupabase: unknown;
+	let getSessionMock: MockInstance;
+	let getUserMock: MockInstance;
+	let signOutMock: MockInstance;
+	let onAuthStateChangeMock: MockInstance;
 
 	beforeEach(async () => {
 		vi.clearAllMocks();
 
-		// Get the mocked supabase
+		// Get the mocked supabase and capture typed mocks
 		const { supabase } = await import('$lib/supabase/client');
-		mockSupabase = supabase;
+		getSessionMock = vi.mocked(supabase.auth.getSession);
+		getUserMock = vi.mocked(supabase.auth.getUser);
+		signOutMock = vi.mocked(supabase.auth.signOut);
+		onAuthStateChangeMock = vi.mocked(supabase.auth.onAuthStateChange);
 
 		// Reset store to initial state
 		authStore.set({
@@ -49,10 +55,10 @@ describe('Auth Store Tests', () => {
 			const mockUser = { id: '123', email: 'test@example.com' };
 			const mockSession = { access_token: 'token' };
 
-			mockSupabase.auth.getSession.mockResolvedValue({
+			getSessionMock.mockResolvedValue({
 				data: { session: mockSession }
 			});
-			mockSupabase.auth.getUser.mockResolvedValue({
+			getUserMock.mockResolvedValue({
 				data: { user: mockUser }
 			});
 
@@ -68,17 +74,17 @@ describe('Auth Store Tests', () => {
 	describe('setupAuthListener', () => {
 		it('should setup auth state change listener', () => {
 			setupAuthListener();
-			expect(mockSupabase.auth.onAuthStateChange).toHaveBeenCalled();
+			expect(onAuthStateChangeMock).toHaveBeenCalled();
 		});
 	});
 
 	describe('signOut', () => {
 		it('should sign out successfully', async () => {
-			mockSupabase.auth.signOut.mockResolvedValue({ error: null });
+			signOutMock.mockResolvedValue({ error: null });
 
 			await signOut();
 
-			expect(mockSupabase.auth.signOut).toHaveBeenCalled();
+			expect(signOutMock).toHaveBeenCalled();
 
 			const state = get(authStore);
 			expect(state.user).toBeNull();
@@ -87,7 +93,7 @@ describe('Auth Store Tests', () => {
 		});
 
 		it('should handle sign out error', async () => {
-			mockSupabase.auth.signOut.mockRejectedValue(new Error('Sign out failed'));
+			signOutMock.mockRejectedValue(new Error('Sign out failed'));
 
 			await expect(signOut()).rejects.toThrow('Sign out failed');
 		});

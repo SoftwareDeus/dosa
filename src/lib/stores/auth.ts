@@ -49,7 +49,7 @@ export async function initializeAuth(): Promise<void> {
 			loading: false
 		});
 
-		logger.auth('Auth initialized successfully', { email: user?.email });
+		logger.auth('Auth initialized successfully', { email: user?.email ?? null });
 	} catch (error) {
 		logger.error('Auth initialization error', {
 			error: error instanceof Error ? error.message : String(error)
@@ -80,7 +80,7 @@ export function setupAuthListener(): void {
 			const {
 				data: { user }
 			} = await supabase.auth.getUser();
-			logger.auth('User signed in', { email: user?.email });
+			logger.auth('User signed in', { email: user?.email ?? null });
 			authStore.set({
 				user: user,
 				session: session,
@@ -98,7 +98,7 @@ export function setupAuthListener(): void {
 			const {
 				data: { user }
 			} = await supabase.auth.getUser();
-			logger.auth('Initial session', { email: user?.email });
+			logger.auth('Initial session', { email: user?.email ?? null });
 			authStore.set({
 				user: user,
 				session: session,

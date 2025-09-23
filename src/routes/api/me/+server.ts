@@ -1,4 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
+import type { Json } from '$lib/types/json';
 import { HttpStatus } from '$lib/types/http';
 
 // Aggregates Supabase session/user info and Google profile data if available
@@ -11,7 +12,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 			data: { user }
 		} = await locals.supabase.auth.getUser();
 
-		const response: Record<string, unknown> = {
+		const response: Record<string, Json> = {
 			session: session ?? null,
 			user: user ?? null,
 			providers: user?.app_metadata?.provider
@@ -23,7 +24,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 		// Supabase sets `sb-provider-token` for OAuth providers when available
 		const providerToken = (await locals.supabase.auth.getSession()).data.session?.provider_token as
 			| string
-			| undefined;
+			| null;
 
 		if (providerToken && (response.providers as string[]).includes('google')) {
 			try {

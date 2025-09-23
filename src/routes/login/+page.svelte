@@ -7,7 +7,7 @@
 	import { logger } from '$lib/logger';
 	import { m } from '$lib/paraglide/messages.js';
 
-	export let form: { message?: string } | undefined;
+	export let form: { message?: string } | null;
 	export let data: { error?: string; message?: string } = {};
 
 	let isLogin = true;
