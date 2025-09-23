@@ -3,12 +3,12 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { resolveRoute } from '$app/paths';
+	import { resolve } from '$app/paths';
 
 	export let data: PageData & {
 		me: {
 			data?: {
-				google?: unknown;
+				google?: Record<string, unknown> | undefined;
 				user?: { id?: string; email?: string; created_at?: string; last_sign_in_at?: string };
 				providers?: string[];
 			};
@@ -20,7 +20,7 @@
 	let phone = '';
 	let avatarUrl = '';
 
-	$: google = data.me?.data?.google as Record<string, any> | undefined;
+	$: google = data.me?.data?.google as Record<string, unknown> | undefined;
 	$: user = data.me?.data?.user;
 	$: ts = data.me?.ts;
 
@@ -29,7 +29,7 @@
 	$: avatarUrl = google?.photos?.[0]?.url ?? '';
 
 	function back() {
-		goto(resolveRoute('/app/profile'));
+		goto(resolve('/app/profile'));
 	}
 </script>
 
@@ -38,7 +38,7 @@
 		<div class="mb-4 flex items-center justify-between">
 			<h1 class="text-2xl font-semibold">{m.data_page_title()}</h1>
 			<div class="flex gap-2">
-				<a href={resolveRoute('/app/profile/data')} class="rounded bg-gray-100 px-3 py-2 text-sm"
+				<a href={resolve('/app/profile/data')} class="rounded bg-gray-100 px-3 py-2 text-sm"
 					>{m.data_refresh()}</a
 				>
 				<button class="rounded border bg-white px-3 py-2 text-sm" on:click={back}

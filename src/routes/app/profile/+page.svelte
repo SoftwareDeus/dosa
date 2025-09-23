@@ -3,7 +3,7 @@
 	// import { supabase } from '$lib/supabase/client';
 	// import { authStore } from '$lib/stores/auth';
 	import { logger } from '$lib/logger';
-	import { resolveRoute } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
 	import { m } from '$lib/paraglide/messages.js';
 	import { setLocale } from '$lib/paraglide/runtime';
@@ -100,7 +100,7 @@
 					</div>
 				</div>
 				<a
-					href={resolveRoute('/app/profile/data')}
+					href={resolve('/app/profile/data')}
 					class="block w-full rounded-lg bg-blue-500 py-2 text-center text-white hover:bg-blue-600"
 				>
 					{m.profile_edit()}
