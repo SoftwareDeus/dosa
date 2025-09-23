@@ -18,14 +18,14 @@
 
 	$: currentPath = $page.url.pathname;
 
-    import { m } from '$lib/paraglide/messages.js';
-    type NavItem = { href: string; icon: string; label: string };
-    const navItems: NavItem[] = [
-        { href: '/', icon: '🏠', label: m.nav_home() },
-        { href: '/app/explore', icon: '🔍', label: m.nav_explore() },
-        { href: '/app/favorites', icon: '❤️', label: m.nav_favorites() },
-        { href: '/app/profile', icon: '👤', label: m.nav_profile() }
-    ];
+	import { m } from '$lib/paraglide/messages.js';
+	type NavItem = { href: string; icon: string; label: string };
+	const navItems: NavItem[] = [
+		{ href: '/', icon: '🏠', label: m.nav_home() },
+		{ href: '/app/explore', icon: '🔍', label: m.nav_explore() },
+		{ href: '/app/favorites', icon: '❤️', label: m.nav_favorites() },
+		{ href: '/app/profile', icon: '👤', label: m.nav_profile() }
+	];
 
 	onMount(async () => {
 		// Only setup auth listener, don't initialize here
@@ -57,19 +57,16 @@
 		<div class="border-t border-gray-100 bg-gray-50 px-4 py-2">
 			<div class="flex items-center justify-between">
 				<div class="flex items-center space-x-2">
-					<div class="h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center">
+					<div class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500">
 						<span class="text-xs font-medium text-white">
 							{data.user.email.charAt(0).toUpperCase()}
 						</span>
 					</div>
 					<span class="text-sm text-gray-700">{data.user.email}</span>
 				</div>
-                <a 
-                    href="/logout" 
-                    class="text-xs text-gray-500 hover:text-red-600 transition-colors"
-                >
-                    {m.user_bar_logout()}
-                </a>
+				<a href="/logout" class="text-xs text-gray-500 transition-colors hover:text-red-600">
+					{m.user_bar_logout()}
+				</a>
 			</div>
 		</div>
 	{/if}

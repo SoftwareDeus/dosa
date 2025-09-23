@@ -4,7 +4,7 @@ import { redirect, fail } from '@sveltejs/kit';
 export const prerender = false;
 
 export const load: PageServerLoad = async (event) => {
-    if (event.locals.user) {
+	if (event.locals.user) {
 		const next = event.url.searchParams.get('next') || '/app';
 		throw redirect(303, next);
 	}

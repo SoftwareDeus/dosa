@@ -6,6 +6,7 @@ import {
 } from '@supabase/ssr';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 import type { Handle } from '@sveltejs/kit';
+import { logger } from '$lib/logger';
 
 export const withSupabase: Handle = async ({ event, resolve }) => {
 	const cookieMethods: CookieMethodsServer = {
@@ -32,7 +33,7 @@ export const withSupabase: Handle = async ({ event, resolve }) => {
 	const {
 		data: { session }
 	} = await supabase.auth.getSession();
-	
+
 	let user = null;
 	if (session) {
 		// If we have a session, try to get the user
@@ -40,9 +41,9 @@ export const withSupabase: Handle = async ({ event, resolve }) => {
 		user = userData.user;
 	}
 
-	// Debug log for OAuth issues
+	// Debug log for OAuth issues (uses app logger to avoid no-console)
 	if (event.url.pathname.includes('/login') || event.url.pathname.includes('/auth/callback')) {
-		console.log('🔧 withSupabase:', {
+		logger.auth('withSupabase state', {
 			path: event.url.pathname,
 			hasSession: !!session,
 			hasUser: !!user,

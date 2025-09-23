@@ -18,7 +18,7 @@ export const GET: RequestHandler = async ({ locals, cookies, url: _url }) => {
 		// Get Supabase project reference from URL
 		const supabaseUrl = locals.supabase.supabaseUrl;
 		const projectRef = supabaseUrl.split('//')[1]?.split('.')[0] || 'supabase';
-		
+
 		const cookieNames = [
 			'sb-access-token',
 			'sb-refresh-token',
@@ -51,7 +51,7 @@ export const GET: RequestHandler = async ({ locals, cookies, url: _url }) => {
 			// This is a redirect, not an actual error
 			throw error;
 		}
-		
+
 		// This is a real error
 		logger.error('Logout error', { error: error instanceof Error ? error.message : String(error) });
 		throw redirect(303, '/login');

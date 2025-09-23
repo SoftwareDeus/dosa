@@ -25,18 +25,29 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 	const next = url.searchParams.get('next') ?? '/app';
 
 	if (!code) {
-		return new Response(null, { status: 303, headers: { Location: '/login?error=auth_failed&message=Missing%20code' } });
+		return new Response(null, {
+			status: 303,
+			headers: { Location: '/login?error=auth_failed&message=Missing%20code' }
+		});
 	}
 
 	const { error } = await supabase.auth.exchangeCodeForSession(code);
 	if (error) {
-		return new Response(null, { status: 303, headers: { Location: `/login?error=auth_failed&message=${encodeURIComponent(error.message)}` } });
+		return new Response(null, {
+			status: 303,
+			headers: { Location: `/login?error=auth_failed&message=${encodeURIComponent(error.message)}` }
+		});
 	}
 
 	// Optional: verify user exists
-	const { data: { user } } = await supabase.auth.getUser();
+	const {
+		data: { user }
+	} = await supabase.auth.getUser();
 	if (!user) {
-		return new Response(null, { status: 303, headers: { Location: '/login?error=auth_failed&message=No%20user' } });
+		return new Response(null, {
+			status: 303,
+			headers: { Location: '/login?error=auth_failed&message=No%20user' }
+		});
 	}
 
 	return new Response(null, { status: 303, headers: { Location: next } });

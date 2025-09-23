@@ -1,5 +1,5 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json, redirect } from '@sveltejs/kit';
+import { json, type RequestHandler } from '@sveltejs/kit';
+import { logger } from '$lib/logger';
 
 export const POST: RequestHandler = async ({ locals, request }) => {
 	try {
@@ -20,19 +20,32 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		}
 
 		// Verify session after either setSession or existing cookies
-		const { data: { session } } = await locals.supabase.auth.getSession();
-		const { data: { user } } = await locals.supabase.auth.getUser();
+		const {
+			data: { session }
+		} = await locals.supabase.auth.getSession();
+		const {
+			data: { user }
+		} = await locals.supabase.auth.getUser();
 
 		if (user && session) {
 			// Update locals for this request lifecycle
 			locals.session = session;
 			locals.user = user;
-			return json({ success: true, user: { id: user.id, email: user.email }, next: next ?? '/app' });
+			return json({
+				success: true,
+				user: { id: user.id, email: user.email },
+				next: next ?? '/app'
+			});
 		}
 
 		return json({ success: false, error: 'No valid session found' }, { status: 401 });
 	} catch (error) {
-		console.error('Auth complete error:', error);
-		return json({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
+		logger.error('Auth complete error', {
+			error: error instanceof Error ? error.message : String(error)
+		});
+		return json(
+			{ success: false, error: error instanceof Error ? error.message : 'Unknown error' },
+			{ status: 500 }
+		);
 	}
 };
