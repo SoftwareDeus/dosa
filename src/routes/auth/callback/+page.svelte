@@ -2,28 +2,27 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 
-	onMount(async (): Promise<void> => {
-		// Parse URL hash for implicit tokens
+	onMount((): void => {
 		const FIRST_CHAR_INDEX = 1;
 		const hash = new URLSearchParams(window.location.hash.slice(FIRST_CHAR_INDEX));
 		const access_token = hash.get('access_token') || undefined;
 		const refresh_token =
 			hash.get('refresh_token') || hash.get('provider_refresh_token') || undefined;
-		const next = $page.url.searchParams.get('next') || '/app';
+		const next = new URL(window.location.href).searchParams.get('next') || '/app';
 
-		try {
-			await fetch('/api/auth/complete', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				credentials: 'include',
-				body: JSON.stringify({ access_token, refresh_token, next })
-			});
-		} catch {
-			// ignore
+		if (!access_token && !refresh_token) {
+			// If no hash tokens present, server load will handle code flow; nothing to do
+			return;
 		}
 
-		// Redirect regardless; server cookies should be set now (if possible)
-		window.location.replace(next);
+		void fetch('/api/auth/complete', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include',
+			body: JSON.stringify({ access_token, refresh_token, next })
+		}).finally(() => {
+			window.location.replace(next);
+		});
 	});
 </script>
 

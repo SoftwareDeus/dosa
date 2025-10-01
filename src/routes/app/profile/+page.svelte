@@ -1,38 +1,24 @@
 <script lang="ts">
-	// import { goto } from '$app/navigation';
-	// import { supabase } from '$lib/supabase/client';
-	// import { authStore } from '$lib/stores/auth';
 	import { logger } from '$lib/logger';
 	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
+	import type { Json } from '$lib/types/json';
 	import { m } from '$lib/paraglide/messages.js';
 	import { setLocale } from '$lib/paraglide/runtime';
-	// import { onMount } from 'svelte';
 
 	export let data: PageData;
 
 	let isLoggingOut = false;
 	let showData = false;
 	let isEditing = false;
-	let loadingData = false;
-	let loadError: string | null = null;
-	let lastTs = '';
-	import type { Json } from '$lib/types/json';
-	let me: Record<string, Json> | null = null;
-	let formName = '';
-	let formPhone = '';
-	let formAvatarUrl = '';
+	const loadingData = false;
+	const loadError: string | null = null;
+	const lastTs = data.lastTs ?? '';
+	const me = (data.me ?? null) as Record<string, Json> | null;
+	let formName = data.formName ?? '';
+	let formPhone = data.formPhone ?? '';
+	let formAvatarUrl = data.formAvatarUrl ?? '';
 	const JSON_SPACE = 2;
-
-	type GooglePeople = {
-		names?: Array<{ displayName?: string | null }>;
-		phoneNumbers?: Array<{ value?: string | null }>;
-		photos?: Array<{ url?: string | null }>;
-	};
-
-	function isObjectRecord(value: Json | null): value is { [key: string]: Json } {
-		return typeof value === 'object' && value !== null && !Array.isArray(value);
-	}
 
 	async function handleLogout(): Promise<void> {
 		if (isLoggingOut) return; // Prevent double clicks
@@ -54,32 +40,8 @@
 		}
 	}
 
-	async function fetchData(): Promise<void> {
-		loadingData = true;
-		loadError = null;
-		try {
-			const res = await fetch('/api/me');
-			const j = await res.json();
-			if (!j.ok) throw new Error(j.error || 'failed');
-			me = j.data;
-			lastTs = j.ts;
-			const google = isObjectRecord(me?.google ?? null) ? (me?.google as GooglePeople) : null;
-			const googleName: string | null = google?.names?.[0]?.displayName ?? null;
-			formName = googleName || data.user.email?.split('@')[0] || '';
-			const googlePhone: string | null = google?.phoneNumbers?.[0]?.value ?? null;
-			formPhone = googlePhone || '';
-			const googlePhoto: string | null = google?.photos?.[0]?.url ?? null;
-			formAvatarUrl = googlePhoto || '';
-		} catch (e) {
-			loadError = e instanceof Error ? e.message : String(e);
-		} finally {
-			loadingData = false;
-		}
-	}
-
 	function _toggleData(): void {
 		showData = !showData;
-		if (showData && !me && !loadingData) fetchData();
 	}
 
 	async function saveProfile(): Promise<void> {

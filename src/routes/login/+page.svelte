@@ -2,83 +2,45 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import { Capacitor } from '@capacitor/core';
-	import { supabase } from '$lib/supabase/client';
-	import { logger } from '$lib/logger';
 	import { m } from '$lib/paraglide/messages.js';
+	import { signInWithGoogle, signInWithApple, shouldShowAppleSignIn } from '$lib/login/client';
 
 	export let form: { message?: string } | null;
 	export let data: { error?: string; message?: string } = {};
 
 	let isLogin = true;
 	let isLoading = false;
+	let showAppleSignIn = true;
 
 	function toggleMode(): void {
 		isLogin = !isLogin;
 	}
 
-	async function signInWithGoogle(): Promise<void> {
+	async function onGoogleClick(): Promise<void> {
 		isLoading = true;
 		try {
 			const next = $page.url.searchParams.get('next') || '/app';
-			const options = {
-				redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-				flowType: 'pkce'
-			};
-			const { error } = await supabase.auth.signInWithOAuth({
-				provider: 'google',
-				options
-			});
-			if (error) throw error;
-		} catch (error) {
-			logger.error('Google login error', {
-				error: error instanceof Error ? error.message : String(error)
-			});
+			await signInWithGoogle(window.location.origin, next);
+		} catch (_error) {
+			form = { message: m.login_google() };
 		} finally {
 			isLoading = false;
 		}
 	}
 
-	async function signInWithApple(): Promise<void> {
+	async function onAppleClick(): Promise<void> {
 		isLoading = true;
 		try {
 			const next = $page.url.searchParams.get('next') || '/app';
-			// Use web OAuth for Apple Sign In
-			const { error } = await supabase.auth.signInWithOAuth({
-				provider: 'apple',
-				options: {
-					redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`
-				}
-			});
-			if (error) throw error;
-		} catch (error) {
-			logger.error('Apple login error', {
-				error: error instanceof Error ? error.message : String(error)
-			});
-			// Show error message to user
-			form = { message: m.login_apple() };
+			const errMsg = await signInWithApple(window.location.origin, next);
+			if (errMsg) form = { message: errMsg };
 		} finally {
 			isLoading = false;
 		}
 	}
 
-	let isIOS = false;
-	let showAppleSignIn = true;
-
-	onMount(async (): Promise<void> => {
-		// Check if we're on iOS for Apple Sign In
-		isIOS = Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
-
-		// Check if Apple Sign In is available
-		if (isIOS) {
-			// Apple Sign In is available on iOS
-			showAppleSignIn = true;
-		} else {
-			// Check if we're on a web browser that supports Apple Sign In
-			showAppleSignIn =
-				/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-				(navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome'));
-		}
+	onMount((): void => {
+		showAppleSignIn = shouldShowAppleSignIn();
 	});
 </script>
 
@@ -107,7 +69,7 @@
 			<!-- Social Login Buttons -->
 			<div class="mb-6 space-y-3">
 				<button
-					on:click={signInWithGoogle}
+					on:click={onGoogleClick}
 					disabled={isLoading}
 					class="flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-3 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
 				>
@@ -134,7 +96,7 @@
 
 				{#if showAppleSignIn}
 					<button
-						on:click={signInWithApple}
+						on:click={onAppleClick}
 						disabled={isLoading}
 						class="flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-3 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
 					>
