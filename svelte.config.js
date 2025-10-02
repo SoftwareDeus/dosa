@@ -6,7 +6,9 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: vercel(),
-		csrf: { checkOrigin: true },
+		csrf: { 
+			checkOrigin: process.env.NODE_ENV === 'production'
+		},
 		prerender: {
 			handleHttpError: 'warn'
 		}
