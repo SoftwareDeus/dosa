@@ -1,6 +1,6 @@
 # Supabase Authentication Setup
 
-Diese Anleitung zeigt dir, wie du die Supabase-Authentifizierung für deine UseIt-App konfigurierst.
+Diese Anleitung zeigt dir, wie du die Supabase-Authentifizierung für deine Dosa-App konfigurierst.
 
 ## 1. Supabase-Projekt erstellen
 

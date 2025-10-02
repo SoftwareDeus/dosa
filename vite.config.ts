@@ -17,8 +17,8 @@ export default defineConfig({
 		VitePWA({
 			registerType: 'autoUpdate',
 			manifest: {
-				name: 'Useit',
-				short_name: 'Useit',
+				name: 'Dosa',
+				short_name: 'Dosa',
 				start_url: '/',
 				display: 'standalone',
 				icons: [

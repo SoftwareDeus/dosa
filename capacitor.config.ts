@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-	appId: 'com.useit.app',
-	appName: 'useit',
+	appId: 'com.dosa.app',
+	appName: 'dosa',
 	webDir: 'build',
 	server: {
 		androidScheme: 'https'

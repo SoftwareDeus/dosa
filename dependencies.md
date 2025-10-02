@@ -1,4 +1,4 @@
-# 📦 Projekt: useit – Dependency Übersicht
+# 📦 Projekt: dosa – Dependency Übersicht
 
 Dieses Dokument beschreibt die wichtigsten Dependencies und warum sie im Projekt benötigt werden.  
 Stand: aktuell zu `package.json`.
