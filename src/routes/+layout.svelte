@@ -16,6 +16,7 @@
 		} | null;
 	};
 
+	// derive path directly from $page for reactivity on client navigation
 	$: currentPath = $page.url.pathname;
 
 	import { m } from '$lib/paraglide/messages.js';
@@ -24,6 +25,7 @@
 	const navItems: NavItem[] = [
 		{ href: '/', icon: '🏠', label: m.nav_home() },
 		{ href: '/app/explore', icon: '🔍', label: m.nav_explore() },
+		{ href: '/app/ai', icon: '🤖', label: m.nav_ai_chat() },
 		{ href: '/app/favorites', icon: '❤️', label: m.nav_favorites() },
 		{ href: '/app/profile', icon: '👤', label: m.nav_profile() }
 	];
@@ -43,9 +45,7 @@
 		}
 	});
 
-	function isActive(href: string): boolean {
-		return currentPath === href;
-	}
+	// Inline usage of $page in markup ensures reactivity without manual updates
 </script>
 
 <div class="flex h-screen flex-col">
@@ -78,15 +78,15 @@
 				<a
 					href={item.href}
 					aria-label={item.label}
-					aria-current={isActive(item.href) ? 'page' : undefined}
+					aria-current={($page.url.pathname === item.href) || (item.href !== '/' && $page.url.pathname.startsWith(item.href + '/')) ? 'page' : undefined}
 					class="flex flex-1 flex-col items-center px-2 py-3 transition-all duration-200
-						   {isActive(item.href)
+						   {($page.url.pathname === item.href) || (item.href !== '/' && $page.url.pathname.startsWith(item.href + '/'))
 						? 'bg-blue-50 text-blue-600'
 						: 'text-gray-500 hover:text-blue-600 active:scale-95'}"
 				>
 					<span
 						class="mb-1 text-2xl transition-transform duration-200
-							   {isActive(item.href) ? 'scale-110' : ''}"
+							   {($page.url.pathname === item.href) || (item.href !== '/' && $page.url.pathname.startsWith(item.href + '/')) ? 'scale-110' : ''}"
 					>
 						{item.icon}
 					</span>
