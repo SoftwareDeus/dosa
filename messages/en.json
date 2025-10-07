@@ -90,5 +90,8 @@
 	"update_error": "Update failed",
 	"field_name": "Name",
 	"field_phone": "Phone",
-	"field_avatar_url": "Avatar URL"
+	"field_avatar_url": "Avatar URL",
+	"nav_ai_chat": "AI Chat",
+	"nav_ai_vision": "Vision",
+	"nav_ai_tools": "AI Tools"
 }
