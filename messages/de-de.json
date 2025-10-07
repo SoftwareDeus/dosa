@@ -94,8 +94,5 @@
 	"data_page_title": "Meine Daten",
 	"data_refresh": "Aktualisieren",
 	"data_google_missing": "Keine Google-Daten vorhanden",
-	"data_back": "Zurück zum Profil",
-	"nav_ai_chat": "KI Chat",
-	"nav_ai_vision": "Bildanalyse",
-	"nav_ai_tools": "KI-Tools"
+	"data_back": "Zurück zum Profil"
 }

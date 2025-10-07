@@ -9,25 +9,25 @@ export async function getUserFromRequest(event: RequestEvent): Promise<User | nu
 	// Use the already authenticated user from locals (set by withSupabase)
 	if (event.locals.user) return event.locals.user;
 
-	const auth = event.request.headers.get('authorization');
-	if (auth?.startsWith('Bearer ')) {
-		const BEARER_PREFIX = 'Bearer ';
-		const _token = auth.slice(BEARER_PREFIX.length);
+    const auth = event.request.headers.get('authorization');
+    if (auth?.startsWith('Bearer ')) {
+        const BEARER_PREFIX = 'Bearer ';
+        const token = auth.slice(BEARER_PREFIX.length);
 
 		const emptyCookies: CookieMethodsServer = {
 			getAll: () => [],
 			setAll: () => {}
 		};
 
-		const sb = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+        const sb = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
 			cookies: emptyCookies,
 			cookieOptions: { name: 'sb' },
 			cookieEncoding: 'base64url'
 		});
 
-		const {
-			data: { user }
-		} = await sb.auth.getUser();
+        const {
+            data: { user }
+        } = await sb.auth.getUser(token);
 		if (user) return user;
 	}
 	return null;
