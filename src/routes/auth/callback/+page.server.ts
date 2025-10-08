@@ -2,6 +2,7 @@ import type { PageServerLoad } from './$types';
 import { createServerClient } from '@supabase/ssr';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 import { HttpStatus } from '$lib/types/http';
+import { redirect } from '@sveltejs/kit';
 
 export const prerender = false;
 
@@ -34,7 +35,7 @@ export const load: PageServerLoad = async (event) => {
 
 	const { error } = await supabase.auth.exchangeCodeForSession(code);
 	if (error) {
-		throw event.redirect(
+		throw redirect(
 			HttpStatus.SEE_OTHER,
 			`/login?error=auth_failed&message=${encodeURIComponent(error.message)}`
 		);
@@ -45,9 +46,8 @@ export const load: PageServerLoad = async (event) => {
 		data: { user }
 	} = await supabase.auth.getUser();
 	if (!user) {
-		throw event.redirect(HttpStatus.SEE_OTHER, '/login?error=auth_failed&message=No%20user');
+		throw redirect(HttpStatus.SEE_OTHER, '/login?error=auth_failed&message=No%20user');
 	}
 
-	throw event.redirect(HttpStatus.SEE_OTHER, next);
+	throw redirect(HttpStatus.SEE_OTHER, next);
 };
-

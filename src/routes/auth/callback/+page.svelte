@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 
 	onMount((): void => {
 		const FIRST_CHAR_INDEX = 1;

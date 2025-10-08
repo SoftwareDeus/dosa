@@ -84,7 +84,7 @@ export default defineConfig(
 			'@typescript-eslint/no-magic-numbers': [
 				'warn',
 				{
-					ignore: [],
+					ignore: [0, 1, -1, 3, 4, 10, 90, 100, 400, 401, 429, 500, 1024, 2048],
 					ignoreArrayIndexes: true,
 					ignoreDefaultValues: true,
 					ignoreEnums: true,

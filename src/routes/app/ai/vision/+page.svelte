@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { analyzeImage } from '$lib/ai/chat-client';
-	import { Camera } from '@capacitor/camera';
-	import { CameraResultType, CameraSource } from '@capacitor/camera';
+	import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 	let selectedImage = $state<string | null>(null);
 	let prompt = $state('Was siehst du auf diesem Bild?');
@@ -9,7 +8,7 @@
 	let isLoading = $state(false);
 	let error = $state<string | null>(null);
 
-	async function handleFileUpload(event: Event) {
+	async function handleFileUpload(event: Event): Promise<void> {
 		const target = event.target as HTMLInputElement;
 		const file = target.files?.[0];
 		if (!file) return;
@@ -24,7 +23,7 @@
 		reader.readAsDataURL(file);
 	}
 
-	async function capturePhoto() {
+	async function capturePhoto(): Promise<void> {
 		try {
 			const image = await Camera.getPhoto({
 				quality: 90,
@@ -38,12 +37,12 @@
 				response = null;
 				error = null;
 			}
-		} catch (err: any) {
+		} catch (err: { message?: string }) {
 			error = err.message || 'Fehler beim Aufnehmen des Fotos';
 		}
 	}
 
-	async function handleAnalyze() {
+	async function handleAnalyze(): Promise<void> {
 		if (!selectedImage || !prompt.trim()) return;
 
 		isLoading = true;
@@ -53,14 +52,14 @@
 		try {
 			const result = await analyzeImage(selectedImage, prompt.trim());
 			response = result;
-		} catch (err: any) {
+		} catch (err: { message?: string }) {
 			error = err.message || 'Fehler bei der Bildanalyse';
 		} finally {
 			isLoading = false;
 		}
 	}
 
-	function reset() {
+	function reset(): void {
 		selectedImage = null;
 		response = null;
 		error = null;
@@ -108,12 +107,7 @@
 							class="mb-2 cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
 						>
 							Datei hochladen
-							<input
-								type="file"
-								accept="image/*"
-								onchange={handleFileUpload}
-								class="hidden"
-							/>
+							<input type="file" accept="image/*" onchange={handleFileUpload} class="hidden" />
 						</label>
 						<button
 							onclick={capturePhoto}
@@ -131,18 +125,11 @@
 				<div class="rounded-xl bg-white p-6 shadow-sm">
 					<div class="mb-4 flex items-center justify-between">
 						<h2 class="text-lg font-semibold text-gray-900">Ausgewähltes Bild</h2>
-						<button
-							onclick={reset}
-							class="text-sm text-red-600 hover:text-red-700"
-						>
+						<button onclick={reset} class="text-sm text-red-600 hover:text-red-700">
 							Zurücksetzen
 						</button>
 					</div>
-					<img
-						src={selectedImage}
-						alt="Selected"
-						class="w-full rounded-lg shadow-md"
-					/>
+					<img src={selectedImage} alt="Selected" class="w-full rounded-lg shadow-md" />
 				</div>
 
 				<!-- Prompt -->
@@ -154,7 +141,7 @@
 						id="prompt"
 						bind:value={prompt}
 						rows="3"
-						class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+						class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 					></textarea>
 					<button
 						onclick={handleAnalyze}
@@ -163,7 +150,9 @@
 					>
 						{#if isLoading}
 							<span class="flex items-center justify-center gap-2">
-								<span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+								<span
+									class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+								></span>
 								Analysiere...
 							</span>
 						{:else}
@@ -195,4 +184,3 @@
 		{/if}
 	</div>
 </div>
-

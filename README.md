@@ -16,21 +16,25 @@ A modern cross-platform mobile application built with SvelteKit and Capacitor, f
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - [SvelteKit 2](https://kit.svelte.dev/) - Web framework
 - [Svelte 5](https://svelte.dev/) - UI framework with runes
 - [Tailwind CSS v4](https://tailwindcss.com/) - Styling
 - [Paraglide.js](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) - i18n
 
 ### Mobile
+
 - [Capacitor 7](https://capacitorjs.com/) - Native mobile runtime
 - Plugins: Camera, Geolocation, Push Notifications, Secure Storage, and more
 
 ### Backend & Services
+
 - [Supabase](https://supabase.com/) - Backend as a Service (Auth, Database)
 - [Prisma](https://www.prisma.io/) - Database ORM
 - [Vercel](https://vercel.com/) - Hosting & Serverless functions
 
 ### Development Tools
+
 - [Vite 7](https://vitejs.dev/) - Build tool
 - [TypeScript 5](https://www.typescriptlang.org/) - Type safety
 - [ESLint](https://eslint.org/) - Code linting
@@ -70,6 +74,7 @@ cp env.example .env
 ```
 
 Required variables:
+
 - `PUBLIC_SUPABASE_URL` - Your Supabase project URL
 - `PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous key
 
@@ -206,6 +211,7 @@ npm run check
 ## 🌍 Internationalization
 
 This project supports multiple languages using Paraglide.js:
+
 - English (`en`)
 - German (`de-de`)
 
@@ -252,6 +258,7 @@ The app is configured to deploy to Vercel automatically:
 ### Mobile App Stores
 
 1. Build production versions:
+
    ```bash
    npm run build:mobile
    ```

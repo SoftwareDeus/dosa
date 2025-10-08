@@ -2,13 +2,14 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { requireUserAPI } from '$lib/server/auth';
 import { anthropic, DEFAULT_MODEL, isAIEnabled } from '$lib/server/ai';
 import { HttpStatus } from '$lib/types/http';
+import { logger } from '$lib/logger';
 
 export const prerender = false;
 
 /**
  * POST /api/ai/chat
  * Claude chat endpoint with streaming support
- * 
+ *
  * Request body:
  * - messages: Array of { role: 'user' | 'assistant', content: string }
  * - stream?: boolean (default: false)
@@ -63,10 +64,7 @@ export const POST: RequestHandler = async (event) => {
 				async start(controller) {
 					try {
 						for await (const chunk of streamResponse) {
-							if (
-								chunk.type === 'content_block_delta' &&
-								chunk.delta.type === 'text_delta'
-							) {
+							if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
 								const text = chunk.delta.text;
 								// Send as Server-Sent Event
 								const data = `data: ${JSON.stringify({ text })}\n\n`;
@@ -76,7 +74,7 @@ export const POST: RequestHandler = async (event) => {
 						controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'));
 						controller.close();
 					} catch (error) {
-						console.error('Streaming error:', error);
+						logger.error('Streaming error', { error: String(error) });
 						controller.error(error);
 					}
 				}
@@ -108,8 +106,12 @@ export const POST: RequestHandler = async (event) => {
 			stop_reason: message.stop_reason,
 			usage: message.usage
 		});
-	} catch (error: any) {
-		console.error('Claude API error:', error);
+	} catch (e) {
+		const error = e as { status?: number; message?: string };
+		logger.error('Claude API error', {
+			status: error.status ?? null,
+			message: error.message ?? null
+		});
 
 		// Handle rate limiting
 		if (error.status === 429) {
@@ -128,9 +130,8 @@ export const POST: RequestHandler = async (event) => {
 		}
 
 		return Response.json(
-			{ error: error.message || 'Failed to generate response' },
+			{ error: error.message ?? 'Failed to generate response' },
 			{ status: HttpStatus.INTERNAL_SERVER_ERROR }
 		);
 	}
 };
-

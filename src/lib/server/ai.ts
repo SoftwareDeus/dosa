@@ -1,30 +1,35 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { env } from '$env/dynamic/private';
+import { logger } from '$lib/logger';
 
 /**
  * Get API key from environment with fallback to process.env
  */
 function getApiKey(): string {
 	// Try $env/dynamic/private first
-	let key = env.ANTHROPIC_API_KEY;
-	
+	let key = env.ANTHROPIC_API_KEY ?? null;
+
 	// Fallback to process.env (works in Node.js environment)
 	if (!key && typeof process !== 'undefined' && process.env) {
-		key = process.env.ANTHROPIC_API_KEY;
+		const envKey = process.env.ANTHROPIC_API_KEY;
+		if (typeof envKey === 'string' && envKey) key = envKey;
 	}
-	
-	return key || '';
+
+	return key ?? '';
 }
 
 const apiKey = getApiKey();
 
 // Debug: Log API key status (only first/last 4 chars for security)
 if (apiKey) {
-	console.log('✅ ANTHROPIC_API_KEY loaded:', apiKey.slice(0, 10) + '...' + apiKey.slice(-4));
+	const PREFIX_LEN = 10;
+	const SUFFIX_LEN = 4;
+	const masked = `${apiKey.slice(0, PREFIX_LEN)}...${apiKey.slice(apiKey.length - SUFFIX_LEN)}`;
+	logger.info('✅ ANTHROPIC_API_KEY loaded', { masked });
 } else {
-	console.error('❌ ANTHROPIC_API_KEY not found in environment variables');
-	console.error('   Checked: $env/dynamic/private and process.env');
-	console.log('   Available $env keys:', Object.keys(env).join(', '));
+	logger.error('❌ ANTHROPIC_API_KEY not found in environment variables');
+	logger.error('   Checked: $env/dynamic/private and process.env');
+	logger.info('   Available $env keys', { keys: Object.keys(env) });
 }
 
 /**
@@ -40,8 +45,8 @@ export const anthropic = new Anthropic({
  * Using confirmed working model names from Anthropic API
  */
 export const CLAUDE_MODELS = {
-    SONNET_4: 'claude-sonnet-4-0',
-    OPUS_4: 'claude-opus-4-0',
+	SONNET_4: 'claude-sonnet-4-0',
+	OPUS_4: 'claude-opus-4-0'
 } as const;
 
 /**
@@ -55,8 +60,7 @@ export const DEFAULT_MODEL = CLAUDE_MODELS.SONNET_4;
 export function isAIEnabled(): boolean {
 	const key = getApiKey();
 	if (!key) {
-		console.log('🔍 isAIEnabled() check: No API key found');
+		logger.warn('🔍 isAIEnabled() check: No API key found');
 	}
 	return !!key;
 }
-

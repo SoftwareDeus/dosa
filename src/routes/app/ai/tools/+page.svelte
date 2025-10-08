@@ -20,7 +20,7 @@
 	let translateLoading = $state(false);
 	let translateError = $state<string | null>(null);
 
-	async function handleSummarize() {
+	async function handleSummarize(): Promise<void> {
 		if (!summarizeInput.trim()) return;
 
 		summarizeLoading = true;
@@ -28,20 +28,16 @@
 		summarizeResult = null;
 
 		try {
-			const result = await summarizeText(
-				summarizeInput.trim(),
-				summarizeLength,
-				summarizeStyle
-			);
+			const result = await summarizeText(summarizeInput.trim(), summarizeLength, summarizeStyle);
 			summarizeResult = result;
-		} catch (err: any) {
+		} catch (err: { message?: string }) {
 			summarizeError = err.message || 'Fehler bei der Zusammenfassung';
 		} finally {
 			summarizeLoading = false;
 		}
 	}
 
-	async function handleTranslate() {
+	async function handleTranslate(): Promise<void> {
 		if (!translateInput.trim() || !targetLanguage.trim()) return;
 
 		translateLoading = true;
@@ -56,7 +52,7 @@
 				translateTone
 			);
 			translateResult = result;
-		} catch (err: any) {
+		} catch (err: { message?: string }) {
 			translateError = err.message || 'Fehler bei der Übersetzung';
 		} finally {
 			translateLoading = false;
@@ -131,7 +127,7 @@
 								bind:value={summarizeInput}
 								rows="8"
 								placeholder="Füge hier den Text ein, den du zusammenfassen möchtest..."
-								class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+								class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
 							></textarea>
 						</div>
 
@@ -143,7 +139,7 @@
 								<select
 									id="length"
 									bind:value={summarizeLength}
-									class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+									class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
 								>
 									<option value="short">Kurz (2-3 Sätze)</option>
 									<option value="medium">Mittel (1-2 Absätze)</option>
@@ -158,7 +154,7 @@
 								<select
 									id="style"
 									bind:value={summarizeStyle}
-									class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+									class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
 								>
 									<option value="paragraph">Fließtext</option>
 									<option value="bullet_points">Stichpunkte</option>
@@ -173,7 +169,9 @@
 						>
 							{#if summarizeLoading}
 								<span class="flex items-center justify-center gap-2">
-									<span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+									<span
+										class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+									></span>
 									Fasse zusammen...
 								</span>
 							{:else}
@@ -184,7 +182,7 @@
 						{#if summarizeResult}
 							<div class="rounded-lg bg-green-50 p-4">
 								<h3 class="mb-2 font-medium text-green-900">Zusammenfassung:</h3>
-								<p class="whitespace-pre-wrap text-sm text-green-800">{summarizeResult}</p>
+								<p class="text-sm whitespace-pre-wrap text-green-800">{summarizeResult}</p>
 							</div>
 						{/if}
 
@@ -209,7 +207,7 @@
 								bind:value={translateInput}
 								rows="6"
 								placeholder="Füge hier den Text ein, den du übersetzen möchtest..."
-								class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+								class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
 							></textarea>
 						</div>
 
@@ -223,7 +221,7 @@
 									type="text"
 									bind:value={sourceLanguage}
 									placeholder="Automatisch erkennen"
-									class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+									class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
 								/>
 							</div>
 
@@ -234,9 +232,9 @@
 								<select
 									id="target-lang"
 									bind:value={targetLanguage}
-									class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+									class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
 								>
-									{#each languages as lang}
+									{#each languages as lang (lang)}
 										<option value={lang}>{lang}</option>
 									{/each}
 								</select>
@@ -244,13 +242,11 @@
 						</div>
 
 						<div>
-							<label for="tone" class="mb-2 block text-sm font-medium text-gray-700">
-								Ton
-							</label>
+							<label for="tone" class="mb-2 block text-sm font-medium text-gray-700"> Ton </label>
 							<select
 								id="tone"
 								bind:value={translateTone}
-								class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+								class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none"
 							>
 								<option value="neutral">Neutral</option>
 								<option value="formal">Formal</option>
@@ -265,7 +261,9 @@
 						>
 							{#if translateLoading}
 								<span class="flex items-center justify-center gap-2">
-									<span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+									<span
+										class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+									></span>
 									Übersetze...
 								</span>
 							{:else}
@@ -276,7 +274,7 @@
 						{#if translateResult}
 							<div class="rounded-lg bg-green-50 p-4">
 								<h3 class="mb-2 font-medium text-green-900">Übersetzung:</h3>
-								<p class="whitespace-pre-wrap text-sm text-green-800">{translateResult}</p>
+								<p class="text-sm whitespace-pre-wrap text-green-800">{translateResult}</p>
 							</div>
 						{/if}
 
@@ -294,4 +292,3 @@
 		</div>
 	</div>
 </div>
-

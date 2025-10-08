@@ -2,13 +2,14 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { requireUserAPI } from '$lib/server/auth';
 import { anthropic, DEFAULT_MODEL, isAIEnabled } from '$lib/server/ai';
 import { HttpStatus } from '$lib/types/http';
+import { logger } from '$lib/logger';
 
 export const prerender = false;
 
 /**
  * POST /api/ai/vision
  * Claude Vision endpoint for image analysis
- * 
+ *
  * Request body:
  * - image: string (base64 encoded image or URL)
  * - prompt: string (what to analyze in the image)
@@ -30,7 +31,13 @@ export const POST: RequestHandler = async (event) => {
 
 	try {
 		const body = await event.request.json();
-		const { image, prompt, imageType = 'image/jpeg', model = DEFAULT_MODEL, max_tokens = 2048 } = body;
+		const {
+			image,
+			prompt,
+			imageType = 'image/jpeg',
+			model = DEFAULT_MODEL,
+			max_tokens = 2048
+		} = body;
 
 		// Validate inputs
 		if (!image || !prompt) {
@@ -41,7 +48,11 @@ export const POST: RequestHandler = async (event) => {
 		}
 
 		// Prepare the image source
-		let imageSource: any;
+		type ImageUrlSource = { type: 'url'; url: string };
+		type ImageBase64Source = { type: 'base64'; media_type: string; data: string };
+		type ImageSource = ImageUrlSource | ImageBase64Source;
+
+		let imageSource: ImageSource;
 		if (image.startsWith('http://') || image.startsWith('https://')) {
 			// URL-based image
 			imageSource = {
@@ -89,8 +100,11 @@ export const POST: RequestHandler = async (event) => {
 			model: message.model,
 			usage: message.usage
 		});
-	} catch (error: any) {
-		console.error('Claude Vision API error:', error);
+	} catch (error: { status?: number; message?: string }) {
+		logger.error('Claude Vision API error', {
+			status: error.status ?? null,
+			message: error.message ?? null
+		});
 
 		if (error.status === 429) {
 			return Response.json(
@@ -105,4 +119,3 @@ export const POST: RequestHandler = async (event) => {
 		);
 	}
 };
-

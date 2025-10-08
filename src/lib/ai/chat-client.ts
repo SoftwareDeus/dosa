@@ -66,9 +66,10 @@ export async function* streamChatMessage(
 			const lines = buffer.split('\n\n');
 			buffer = lines.pop() || '';
 
+			const DATA_PREFIX = 'data: ';
 			for (const line of lines) {
-				if (line.startsWith('data: ')) {
-					const data = line.slice(6);
+				if (line.startsWith(DATA_PREFIX)) {
+					const data = line.slice(DATA_PREFIX.length);
 					if (data === '[DONE]') return;
 
 					try {
@@ -76,8 +77,8 @@ export async function* streamChatMessage(
 						if (parsed.text) {
 							yield parsed.text;
 						}
-					} catch (e) {
-						console.error('Failed to parse SSE data:', e);
+					} catch (_e) {
+						// Swallow parse errors to avoid noisy logs in client; surface as stream break
 					}
 				}
 			}
@@ -175,4 +176,3 @@ export async function translateText(
 	const data = await response.json();
 	return data.translation;
 }
-

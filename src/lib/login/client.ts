@@ -4,22 +4,20 @@ import { logger } from '$lib/logger';
 import { getRedirectUrl } from '$lib/config';
 
 export async function signInWithGoogle(_origin: string, next: string): Promise<void> {
-    const options = {
-        redirectTo: getRedirectUrl(next),
-        flowType: 'pkce' as const
-    };
+	const options = {
+		redirectTo: getRedirectUrl(next)
+	};
 	const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options });
 	if (error) throw error;
 }
 
 export async function signInWithApple(_origin: string, next: string): Promise<string | null> {
-    const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'apple',
-        options: {
-            redirectTo: getRedirectUrl(next),
-            flowType: 'pkce'
-        }
-    });
+	const { error } = await supabase.auth.signInWithOAuth({
+		provider: 'apple',
+		options: {
+			redirectTo: getRedirectUrl(next)
+		}
+	});
 	if (error) {
 		logger.error('Apple login error', { error: error.message });
 		return 'Mit Apple anmelden fehlgeschlagen';

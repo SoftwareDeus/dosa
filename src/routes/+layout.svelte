@@ -17,7 +17,7 @@
 	};
 
 	// derive path directly from $page for reactivity on client navigation
-	$: currentPath = $page.url.pathname;
+	// use $page directly in markup; no separate currentPath needed
 
 	import { m } from '$lib/paraglide/messages.js';
 	type NavItem = { href: string; icon: string; label: string };
@@ -78,15 +78,22 @@
 				<a
 					href={item.href}
 					aria-label={item.label}
-					aria-current={($page.url.pathname === item.href) || (item.href !== '/' && $page.url.pathname.startsWith(item.href + '/')) ? 'page' : undefined}
+					aria-current={$page.url.pathname === item.href ||
+					(item.href !== '/' && $page.url.pathname.startsWith(item.href + '/'))
+						? 'page'
+						: undefined}
 					class="flex flex-1 flex-col items-center px-2 py-3 transition-all duration-200
-						   {($page.url.pathname === item.href) || (item.href !== '/' && $page.url.pathname.startsWith(item.href + '/'))
+						   {$page.url.pathname === item.href ||
+					(item.href !== '/' && $page.url.pathname.startsWith(item.href + '/'))
 						? 'bg-blue-50 text-blue-600'
 						: 'text-gray-500 hover:text-blue-600 active:scale-95'}"
 				>
 					<span
 						class="mb-1 text-2xl transition-transform duration-200
-							   {($page.url.pathname === item.href) || (item.href !== '/' && $page.url.pathname.startsWith(item.href + '/')) ? 'scale-110' : ''}"
+							   {$page.url.pathname === item.href ||
+						(item.href !== '/' && $page.url.pathname.startsWith(item.href + '/'))
+							? 'scale-110'
+							: ''}"
 					>
 						{item.icon}
 					</span>

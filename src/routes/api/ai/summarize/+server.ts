@@ -1,14 +1,15 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { requireUserAPI } from '$lib/server/auth';
-import { anthropic, CLAUDE_MODELS, isAIEnabled } from '$lib/server/ai';
+import { anthropic, isAIEnabled } from '$lib/server/ai';
 import { HttpStatus } from '$lib/types/http';
+import { logger } from '$lib/logger';
 
 export const prerender = false;
 
 /**
  * POST /api/ai/summarize
  * Summarize text using Claude
- * 
+ *
  * Request body:
  * - text: string (text to summarize)
  * - length?: 'short' | 'medium' | 'long' (default: 'medium')
@@ -63,9 +64,10 @@ export const POST: RequestHandler = async (event) => {
 		const userPrompt = `Please summarize the following text ${lengthInstructions[length]}:\n\n${text}`;
 
 		// Use Haiku for faster summarization (using Claude 3 Haiku)
+		const MAX_TOKENS = 1024;
 		const message = await anthropic.messages.create({
 			model: 'claude-3-haiku-20240307',
-			max_tokens: 1024,
+			max_tokens: MAX_TOKENS,
 			system: systemPrompt,
 			messages: [
 				{
@@ -74,7 +76,7 @@ export const POST: RequestHandler = async (event) => {
 				}
 			]
 		});
-       // Extract text response
+		// Extract text response
 		const textContent = message.content.find((block) => block.type === 'text');
 		const summary = textContent && 'text' in textContent ? textContent.text : '';
 
@@ -84,8 +86,12 @@ export const POST: RequestHandler = async (event) => {
 			model: message.model,
 			usage: message.usage
 		});
-	} catch (error: any) {
-		console.error('Claude Summarize API error:', error);
+	} catch (e) {
+		const error = e as { status?: number; message?: string };
+		logger.error('Claude Summarize API error', {
+			status: error.status ?? null,
+			message: error.message ?? null
+		});
 
 		if (error.status === 429) {
 			return Response.json(
@@ -95,9 +101,8 @@ export const POST: RequestHandler = async (event) => {
 		}
 
 		return Response.json(
-			{ error: error.message || 'Failed to summarize text' },
+			{ error: error.message ?? 'Failed to summarize text' },
 			{ status: HttpStatus.INTERNAL_SERVER_ERROR }
 		);
 	}
 };
-

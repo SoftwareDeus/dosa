@@ -1,14 +1,15 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { requireUserAPI } from '$lib/server/auth';
-import { anthropic, CLAUDE_MODELS, isAIEnabled } from '$lib/server/ai';
+import { anthropic, isAIEnabled } from '$lib/server/ai';
 import { HttpStatus } from '$lib/types/http';
+import { logger } from '$lib/logger';
 
 export const prerender = false;
 
 /**
  * POST /api/ai/translate
  * Translate text using Claude
- * 
+ *
  * Request body:
  * - text: string (text to translate)
  * - targetLanguage: string (target language, e.g., 'German', 'Spanish', 'French')
@@ -69,9 +70,10 @@ export const POST: RequestHandler = async (event) => {
 		const userPrompt = `Translate the following text${sourceInfo} to ${targetLanguage}:\n\n${text}`;
 
 		// Use Haiku for fast translations (using Claude 3 Haiku)
+		const MAX_TOKENS = 2048;
 		const message = await anthropic.messages.create({
 			model: 'claude-3-haiku-20240307',
-			max_tokens: 2048,
+			max_tokens: MAX_TOKENS,
 			system: systemPrompt,
 			messages: [
 				{
@@ -93,8 +95,12 @@ export const POST: RequestHandler = async (event) => {
 			model: message.model,
 			usage: message.usage
 		});
-	} catch (error: any) {
-		console.error('Claude Translate API error:', error);
+	} catch (e) {
+		const error = e as { status?: number; message?: string };
+		logger.error('Claude Translate API error', {
+			status: error.status ?? null,
+			message: error.message ?? null
+		});
 
 		if (error.status === 429) {
 			return Response.json(
@@ -104,9 +110,8 @@ export const POST: RequestHandler = async (event) => {
 		}
 
 		return Response.json(
-			{ error: error.message || 'Failed to translate text' },
+			{ error: error.message ?? 'Failed to translate text' },
 			{ status: HttpStatus.INTERNAL_SERVER_ERROR }
 		);
 	}
 };
-

@@ -13,8 +13,7 @@
 		messages = [
 			{
 				role: 'assistant',
-				content:
-					'Hallo! Ich bin Claude, dein KI-Assistent. Wie kann ich dir heute helfen?',
+				content: 'Hallo! Ich bin Claude, dein KI-Assistent. Wie kann ich dir heute helfen?',
 				timestamp: new Date()
 			}
 		];
@@ -29,7 +28,7 @@
 		}
 	});
 
-	async function handleSend() {
+	async function handleSend(): Promise<void> {
 		if (!inputMessage.trim() || isLoading) return;
 
 		error = null;
@@ -69,7 +68,7 @@
 					idx === assistantMessageIndex ? { ...msg, content: fullResponse } : msg
 				);
 			}
-		} catch (err: any) {
+		} catch (err: { message?: string }) {
 			error = err.message || 'Ein Fehler ist aufgetreten';
 			// Remove the placeholder message if there was an error
 			messages = messages.slice(0, -1);
@@ -78,14 +77,14 @@
 		}
 	}
 
-	function handleKeyDown(event: KeyboardEvent) {
+	function handleKeyDown(event: KeyboardEvent): void {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
 			handleSend();
 		}
 	}
 
-	function formatTime(date: Date | undefined) {
+	function formatTime(date?: Date): string {
 		if (!date) return '';
 		return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
 	}
@@ -110,23 +109,17 @@
 	<!-- Messages -->
 	<div bind:this={chatContainer} class="flex-1 space-y-4 overflow-y-auto p-4">
 		{#each messages as message, i (i)}
-			<div
-				class="flex {message.role === 'user' ? 'justify-end' : 'justify-start'}"
-			>
+			<div class="flex {message.role === 'user' ? 'justify-end' : 'justify-start'}">
 				<div
 					class="max-w-[80%] rounded-2xl px-4 py-3 {message.role === 'user'
 						? 'bg-purple-600 text-white'
 						: 'bg-white text-gray-900 shadow-sm'}"
 				>
-					<p class="whitespace-pre-wrap break-words text-sm leading-relaxed">
+					<p class="text-sm leading-relaxed break-words whitespace-pre-wrap">
 						{message.content || (isLoading && i === messages.length - 1 ? '...' : '')}
 					</p>
 					{#if message.timestamp}
-						<p
-							class="mt-1 text-xs {message.role === 'user'
-								? 'text-purple-200'
-								: 'text-gray-400'}"
-						>
+						<p class="mt-1 text-xs {message.role === 'user' ? 'text-purple-200' : 'text-gray-400'}">
 							{formatTime(message.timestamp)}
 						</p>
 					{/if}
@@ -153,7 +146,7 @@
 				placeholder="Schreibe eine Nachricht..."
 				disabled={isLoading}
 				rows="1"
-				class="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 disabled:text-gray-500"
+				class="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
 			></textarea>
 			<button
 				type="button"
@@ -162,7 +155,9 @@
 				class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-600 text-white transition-colors hover:bg-purple-700 disabled:bg-gray-300 disabled:text-gray-500"
 			>
 				{#if isLoading}
-					<span class="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+					<span
+						class="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"
+					></span>
 				{:else}
 					<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path
@@ -189,4 +184,3 @@
 		overflow: hidden;
 	}
 </style>
-
