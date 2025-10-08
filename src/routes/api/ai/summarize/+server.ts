@@ -74,8 +74,7 @@ export const POST: RequestHandler = async (event) => {
 				}
 			]
 		});
-
-		// Extract text response
+       // Extract text response
 		const textContent = message.content.find((block) => block.type === 'text');
 		const summary = textContent && 'text' in textContent ? textContent.text : '';
 

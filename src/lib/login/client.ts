@@ -1,21 +1,22 @@
 import { Capacitor } from '@capacitor/core';
 import { supabase } from '$lib/supabase/client';
 import { logger } from '$lib/logger';
+import { getRedirectUrl } from '$lib/config';
 
-export async function signInWithGoogle(origin: string, next: string): Promise<void> {
-	const options = {
-		redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
-		flowType: 'pkce' as const
-	};
+export async function signInWithGoogle(_origin: string, next: string): Promise<void> {
+    const options = {
+        redirectTo: getRedirectUrl(next),
+        flowType: 'pkce' as const
+    };
 	const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options });
 	if (error) throw error;
 }
 
-export async function signInWithApple(origin: string, next: string): Promise<string | null> {
+export async function signInWithApple(_origin: string, next: string): Promise<string | null> {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
-            redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+            redirectTo: getRedirectUrl(next),
             flowType: 'pkce'
         }
     });
