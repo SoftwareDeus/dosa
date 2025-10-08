@@ -4,9 +4,10 @@ import { logger } from '$lib/logger';
 import { getRedirectUrl } from '$lib/config';
 
 export async function signInWithGoogle(_origin: string, next: string): Promise<void> {
-	const options = {
-		redirectTo: getRedirectUrl(next)
-	};
+    const options = {
+        redirectTo: getRedirectUrl(next),
+        flowType: 'pkce' as const
+    };
 	const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options });
 	if (error) throw error;
 }
@@ -15,7 +16,8 @@ export async function signInWithApple(_origin: string, next: string): Promise<st
 	const { error } = await supabase.auth.signInWithOAuth({
 		provider: 'apple',
 		options: {
-			redirectTo: getRedirectUrl(next)
+            redirectTo: getRedirectUrl(next),
+            flowType: 'pkce'
 		}
 	});
 	if (error) {
