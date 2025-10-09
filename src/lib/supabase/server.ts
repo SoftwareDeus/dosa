@@ -4,7 +4,8 @@ import {
 	type CookieOptionsWithName,
 	type CookieMethodsServer
 } from '@supabase/ssr';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { env as dynamic } from '$env/dynamic/public';
+import { PUBLIC_SUPABASE_URL as STATIC_URL, PUBLIC_SUPABASE_ANON_KEY as STATIC_KEY } from '$env/static/public';
 import type { Handle } from '@sveltejs/kit';
 import { logger } from '$lib/logger';
 
@@ -24,7 +25,9 @@ export const withSupabase: Handle = async ({ event, resolve }) => {
 		}
 	};
 
-	const supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+    const url = dynamic.PUBLIC_SUPABASE_URL || STATIC_URL;
+    const anon = dynamic.PUBLIC_SUPABASE_ANON_KEY || STATIC_KEY;
+    const supabase = createServerClient(url, anon, {
 		cookies: cookieMethods,
 		cookieOptions: { name: 'sb' } as CookieOptionsWithName,
 		cookieEncoding: 'base64url'

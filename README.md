@@ -67,18 +67,36 @@ npm install
 
 ### 3. Environment Variables
 
-Copy `env.example` to `.env` and fill in your values:
+Use separate env vars for Development and Production Supabase projects.
+
+Create `.env` for development:
 
 ```bash
-cp env.example .env
+# Development Supabase
+PUBLIC_SUPABASE_URL="https://your-dev-project.supabase.co"
+PUBLIC_SUPABASE_ANON_KEY="<dev-anon-key>"
+
+# Local-only secrets (optional)
+ANTHROPIC_API_KEY=""
 ```
 
-Required variables:
+Set environment variables in your hosting provider for production:
 
-- `PUBLIC_SUPABASE_URL` - Your Supabase project URL
-- `PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous key
+- `PUBLIC_SUPABASE_URL` = https://your-prod-project.supabase.co
+- `PUBLIC_SUPABASE_ANON_KEY` = <prod-anon-key>
 
-See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) for detailed Supabase configuration.
+This project reads both static and dynamic public env vars, so hosting platforms
+can inject production values without rebuilding.
+
+Supabase Dashboard → Authentication → URL Configuration:
+
+- Site URL: your production domain (e.g., https://your-domain.com)
+- Additional Redirect URLs:
+  - https://your-domain.com/auth/callback
+  - http://localhost:5173/auth/callback (dev)
+  - any preview domains you use (each with /auth/callback)
+
+See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) for detailed configuration.
 
 ### 4. Start development server
 

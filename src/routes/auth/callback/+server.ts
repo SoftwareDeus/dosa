@@ -1,10 +1,13 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { env as dynamic } from '$env/dynamic/public';
+import { PUBLIC_SUPABASE_URL as STATIC_URL, PUBLIC_SUPABASE_ANON_KEY as STATIC_KEY } from '$env/static/public';
 import { createServerClient } from '@supabase/ssr';
 import { HttpStatus } from '$lib/types/http';
 
 export const GET: RequestHandler = async ({ cookies, url }) => {
-	const supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+    const sbUrl = dynamic.PUBLIC_SUPABASE_URL || STATIC_URL;
+    const sbAnon = dynamic.PUBLIC_SUPABASE_ANON_KEY || STATIC_KEY;
+    const supabase = createServerClient(sbUrl, sbAnon, {
 		cookies: {
 			getAll: () => cookies.getAll().map((c) => ({ name: c.name, value: c.value })),
 			setAll: (arr) =>

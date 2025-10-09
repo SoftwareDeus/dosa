@@ -1,6 +1,7 @@
 // src/lib/server/auth.ts
 import { createServerClient, type CookieMethodsServer } from '@supabase/ssr';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { env as dynamic } from '$env/dynamic/public';
+import { PUBLIC_SUPABASE_URL as STATIC_URL, PUBLIC_SUPABASE_ANON_KEY as STATIC_KEY } from '$env/static/public';
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import { HttpStatus } from '$lib/types/http';
 import type { User } from '@supabase/supabase-js';
@@ -9,7 +10,7 @@ export async function getUserFromRequest(event: RequestEvent): Promise<User | nu
 	// Use the already authenticated user from locals (set by withSupabase)
 	if (event.locals.user) return event.locals.user;
 
-	const auth = event.request.headers.get('authorization');
+    const auth = event.request.headers.get('authorization');
 	if (auth?.startsWith('Bearer ')) {
 		const BEARER_PREFIX = 'Bearer ';
 		const token = auth.slice(BEARER_PREFIX.length);
@@ -19,7 +20,9 @@ export async function getUserFromRequest(event: RequestEvent): Promise<User | nu
 			setAll: () => {}
 		};
 
-		const sb = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+        const url = dynamic.PUBLIC_SUPABASE_URL || STATIC_URL;
+        const anon = dynamic.PUBLIC_SUPABASE_ANON_KEY || STATIC_KEY;
+        const sb = createServerClient(url, anon, {
 			cookies: emptyCookies,
 			cookieOptions: { name: 'sb' },
 			cookieEncoding: 'base64url'
