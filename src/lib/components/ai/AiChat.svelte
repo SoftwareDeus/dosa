@@ -1,7 +1,6 @@
 <script lang="ts">
     import { streamChatMessage, type ChatMessage } from '$lib/ai/chat-client';
     import { onMount } from 'svelte';
-    import { AiSubNav } from '$lib/components';
 
     let messages = $state<ChatMessage[]>([]);
     let inputMessage = $state('');
@@ -85,7 +84,6 @@
     </script>
 
 <div class="flex h-full flex-col bg-gray-50">
-    <AiSubNav />
     <div class="border-b border-gray-200 bg-white px-4 py-3 shadow-sm">
         <div class="flex items-center gap-3">
             <div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
