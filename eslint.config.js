@@ -94,7 +94,23 @@ export default defineConfig(
 				}
 			],
 			// Encourage extracting repeated strings into constants
-			'sonarjs/no-duplicate-string': ['warn', { threshold: 5 }]
+			'sonarjs/no-duplicate-string': ['warn', { threshold: 5 }],
+			// Keep route Svelte files thin: forbid server imports and direct supabase usage in .svelte under routes
+			'no-restricted-imports': [
+				'error',
+				{
+					paths: [
+						{
+							name: '$lib/server',
+							message: 'Do not import server modules directly into route Svelte files; use API endpoints or client wrappers.'
+						},
+						{
+							name: '@supabase/supabase-js',
+							message: 'Avoid direct Supabase usage in route Svelte components; use $lib/supabase/client or server endpoints.'
+						}
+					]
+				}
+			]
 		}
 	},
 	{
