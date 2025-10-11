@@ -190,7 +190,73 @@
           <input id="heightCm" name="heightCm" type="number" min="0" step="0.1" inputmode="decimal" class="w-full rounded border px-2 py-1" bind:value={heightCm} />
           <p class="mt-1 text-xs text-gray-500">Tipp: 180 für cm oder 1.8 für Meter</p>
         </div>
-        <!-- more inputs preserved as in full version -->
+        <div>
+          <label class="mb-1 block text-sm text-gray-700" for="ageYears">Alter (Jahre)</label>
+          <input id="ageYears" name="ageYears" type="number" min="0" step="1" class="w-full rounded border px-2 py-1" bind:value={ageYears} />
+        </div>
+        <div>
+          <label class="mb-1 block text-sm text-gray-700" for="weightKg">Gewicht (kg)</label>
+          <input id="weightKg" name="weightKg" type="number" min="0" step="0.1" inputmode="decimal" class="w-full rounded border px-2 py-1" bind:value={weightKg} />
+        </div>
+        <div>
+          <label class="mb-1 block text-sm text-gray-700" for="sex">Geschlecht</label>
+          <select id="sex" name="sex" class="w-full rounded border px-2 py-1" bind:value={sex}>
+            <option value="">-- Bitte wählen --</option>
+            {#each SEX_OPTIONS as opt}
+              <option value={opt.value}>{opt.value}</option>
+            {/each}
+          </select>
+        </div>
+        <div>
+          <label class="mb-1 block text-sm text-gray-700" for="bloodType">Blutgruppe</label>
+          <select id="bloodType" name="bloodType" class="w-full rounded border px-2 py-1" bind:value={bloodType}>
+            <option value="">-- Bitte wählen --</option>
+            {#each BLOOD_OPTIONS as opt}
+              <option value={opt.value}>{opt.value}</option>
+            {/each}
+          </select>
+        </div>
+        <div>
+          <label class="mb-1 block text-sm text-gray-700" for="dietType">Ernährungstyp</label>
+          <select id="dietType" name="dietType" class="w-full rounded border px-2 py-1" bind:value={dietType}>
+            <option value="">-- Bitte wählen --</option>
+            {#each DIET_OPTIONS as opt}
+              <option value={opt.value}>{opt.value}</option>
+            {/each}
+          </select>
+        </div>
+        <div>
+          <label class="mb-1 block text-sm text-gray-700" for="waterIntake">Wasseraufnahme</label>
+          <select id="waterIntake" name="waterIntake" class="w-full rounded border px-2 py-1" bind:value={waterIntake}>
+            <option value="">-- Bitte wählen --</option>
+            {#each WATER_OPTIONS as opt}
+              <option value={opt.value}>{opt.value}</option>
+            {/each}
+          </select>
+        </div>
+        <div>
+          <label class="mb-1 block text-sm text-gray-700" for="activityLevel">Aktivitätslevel</label>
+          <select id="activityLevel" name="activityLevel" class="w-full rounded border px-2 py-1" bind:value={activityLevel}>
+            <option value="">-- Bitte wählen --</option>
+            {#each ACTIVITY_OPTIONS as opt}
+              <option value={opt.value}>{opt.value}</option>
+            {/each}
+          </select>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="mb-1 block text-sm text-gray-700" for="allergies">Allergien</label>
+          <textarea id="allergies" name="allergies" rows="2" class="w-full rounded border px-2 py-1" bind:value={allergies} placeholder="z.B. Pollen, Nüsse..."></textarea>
+        </div>
+        <div>
+          <label class="mb-1 block text-sm text-gray-700" for="medications">Medikamente</label>
+          <textarea id="medications" name="medications" rows="2" class="w-full rounded border px-2 py-1" bind:value={medications} placeholder="z.B. Aspirin, Insulin..."></textarea>
+        </div>
+        <div>
+          <label class="mb-1 block text-sm text-gray-700" for="chronicConditions">Chronische Erkrankungen</label>
+          <textarea id="chronicConditions" name="chronicConditions" rows="2" class="w-full rounded border px-2 py-1" bind:value={chronicConditions} placeholder="z.B. Diabetes, Asthma..."></textarea>
+        </div>
       </div>
       <div class="flex items-center gap-2">
         <button class="rounded bg-blue-600 px-3 py-2 text-sm text-white disabled:opacity-50" type="button" on:click={saveHealthClient} disabled={saveBusy}>{saveBusy ? 'Speichert…' : 'Speichern'}</button>

@@ -84,6 +84,59 @@
         </div>
       </div>
 
+      {#if data.healthProfile && Object.keys(data.healthProfile).length > 0}
+        <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+          <div class="mb-4 flex items-center justify-between">
+            <h3 class="text-lg font-semibold">🏥 Gesundheitsprofil</h3>
+            <a href={resolve('/app/ai/health')} class="text-sm text-blue-600 hover:text-blue-700">Bearbeiten</a>
+          </div>
+          <div class="space-y-2 text-sm">
+            {#if data.healthProfile.age}
+              <div class="flex justify-between border-b border-gray-50 pb-2">
+                <span class="text-gray-600">Alter:</span>
+                <span class="font-medium">{data.healthProfile.age} Jahre</span>
+              </div>
+            {/if}
+            {#if data.healthProfile.height}
+              <div class="flex justify-between border-b border-gray-50 pb-2">
+                <span class="text-gray-600">Größe:</span>
+                <span class="font-medium">{data.healthProfile.height} cm</span>
+              </div>
+            {/if}
+            {#if data.healthProfile.weight}
+              <div class="flex justify-between border-b border-gray-50 pb-2">
+                <span class="text-gray-600">Gewicht:</span>
+                <span class="font-medium">{data.healthProfile.weight} kg</span>
+              </div>
+            {/if}
+            {#if data.healthProfile.bloodType}
+              <div class="flex justify-between border-b border-gray-50 pb-2">
+                <span class="text-gray-600">Blutgruppe:</span>
+                <span class="font-medium">{data.healthProfile.bloodType}</span>
+              </div>
+            {/if}
+            {#if data.healthProfile.allergies}
+              <div class="border-b border-gray-50 pb-2">
+                <span class="text-gray-600">Allergien:</span>
+                <p class="mt-1 font-medium">{data.healthProfile.allergies}</p>
+              </div>
+            {/if}
+            {#if data.healthProfile.medications}
+              <div class="border-b border-gray-50 pb-2">
+                <span class="text-gray-600">Medikamente:</span>
+                <p class="mt-1 font-medium">{data.healthProfile.medications}</p>
+              </div>
+            {/if}
+            {#if data.healthProfile.conditions}
+              <div class="pb-2">
+                <span class="text-gray-600">Vorerkrankungen:</span>
+                <p class="mt-1 font-medium">{data.healthProfile.conditions}</p>
+              </div>
+            {/if}
+          </div>
+        </div>
+      {/if}
+
       <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
         <h3 class="mb-4 text-lg font-semibold">{m.profile_stats()}</h3>
         <div class="grid grid-cols-2 gap-4">

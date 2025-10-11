@@ -24,6 +24,26 @@ export const load: PageServerLoad = async (event) => {
 	const formName = deriveName(google, user.email ?? null);
 	const formPhone = derivePhone(google);
 	const formAvatarUrl = deriveAvatarUrl(google);
+	
+	// Get health profile data from database
+	const { data: healthRow } = await event.locals.supabase
+		.from('health_profiles')
+		.select('*')
+		.eq('user_id', user.id)
+		.maybeSingle();
+
+	// Convert database format to frontend format
+	const healthProfile = healthRow
+		? {
+				age: healthRow.age_years,
+				height: healthRow.height_cm,
+				weight: healthRow.weight_kg,
+				bloodType: healthRow.blood_type,
+				allergies: healthRow.allergies,
+				medications: healthRow.medications,
+				conditions: healthRow.chronic_conditions
+		  }
+		: null;
 
 	return {
 		user: { id: user.id, email: user.email },
@@ -31,6 +51,7 @@ export const load: PageServerLoad = async (event) => {
 		lastTs,
 		formName,
 		formPhone,
-		formAvatarUrl
+		formAvatarUrl,
+		healthProfile
 	};
 };

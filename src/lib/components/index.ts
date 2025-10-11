@@ -14,6 +14,7 @@ export { default as AppLanding } from './app/AppLanding.svelte';
 export { default as AiChat } from './ai/AiChat.svelte';
 export { default as AiVision } from './ai/AiVision.svelte';
 export { default as AiTools } from './ai/AiTools.svelte';
+export { default as AiHealthChat } from './ai/AiHealthChat.svelte';
 export { default as Card } from './ui/Card.svelte';
 export { default as SectionHeader } from './ui/SectionHeader.svelte';
 export { default as LoadingButton } from './ui/LoadingButton.svelte';
