@@ -41,7 +41,7 @@ import { Capacitor } from '@capacitor/core';
 			credentials: 'include',
 			body: JSON.stringify({ access_token, refresh_token, next })
 		}).finally(() => {
-			// Navigate to the next page
+			// Navigate to the next page on web
 			window.location.replace(next);
 		});
 	});

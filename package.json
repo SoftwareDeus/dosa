@@ -9,7 +9,7 @@
 		"build": "vite build",
 		"build:mobile": "vite build && npx cap sync android",
 		"dev:ios": "npx cap run ios",
-		"dev:android": "npx cap sync android && powershell -ExecutionPolicy Bypass -File ./scripts/ensure-android-device.ps1 -Port 5173 -TimeoutSec 120 && powershell -ExecutionPolicy Bypass -Command \"$env:SERVER_URL='http://localhost:5173'; $env:PUBLIC_OAUTH_DEV_WEB_CALLBACK='true'; $env:PUBLIC_WEB_ORIGIN='http://localhost:5173'; npx cap run android\"",
+		"dev:android": "npx cap sync android && powershell -ExecutionPolicy Bypass -File ./scripts/ensure-android-device.ps1 -Port 5173 -TimeoutSec 120 && powershell -ExecutionPolicy Bypass -Command \"$env:SERVER_URL='http://localhost:5173'; npx cap run android\"",
 		"dev:android:full": "vite build && npx cap sync android && powershell -ExecutionPolicy Bypass -File ./scripts/ensure-android-device.ps1 -Port 5173 -TimeoutSec 120 && npx cap run android",
 		"dev:android:setup": "powershell -ExecutionPolicy Bypass -File ./scripts/ensure-android-device.ps1 -Port 5173 -TimeoutSec 120",
 		"sync": "npx cap sync",

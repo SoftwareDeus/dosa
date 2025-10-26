@@ -3,14 +3,10 @@ import { AppLauncher } from '@capacitor/app-launcher';
 import { supabase } from '$lib/supabase/client';
 import { logger } from '$lib/logger';
 import { getRedirectUrl } from '$lib/config';
-import { env as publicEnv } from '$env/dynamic/public';
 
 export async function signInWithGoogle(_origin: string, next: string): Promise<void> {
-    const useWebCallback = publicEnv.PUBLIC_OAUTH_DEV_WEB_CALLBACK === 'true';
-    const webOrigin = publicEnv.PUBLIC_WEB_ORIGIN || 'http://localhost:5173';
-    const redirectUrl = Capacitor.isNativePlatform() && useWebCallback
-        ? `${webOrigin}/auth/callback?next=${encodeURIComponent(next || '/app')}`
-        : getRedirectUrl(next);
+    // Always prefer pure deep-link PKCE for native
+    const redirectUrl = getRedirectUrl(next);
 	console.log('🔗 OAuth redirect URL:', redirectUrl);
 	
     const options: any = {
@@ -36,11 +32,7 @@ export async function signInWithGoogle(_origin: string, next: string): Promise<v
 }
 
 export async function signInWithApple(_origin: string, next: string): Promise<string | null> {
-    const useWebCallback = publicEnv.PUBLIC_OAUTH_DEV_WEB_CALLBACK === 'true';
-    const webOrigin = publicEnv.PUBLIC_WEB_ORIGIN || 'http://localhost:5173';
-    const redirectTo = Capacitor.isNativePlatform() && useWebCallback
-        ? `${webOrigin}/auth/callback?next=${encodeURIComponent(next || '/app')}`
-        : getRedirectUrl(next);
+    const redirectTo = getRedirectUrl(next);
 
     const { data, error } = await supabase.auth.signInWithOAuth({
 		provider: 'apple',
