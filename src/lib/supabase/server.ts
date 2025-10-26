@@ -18,7 +18,8 @@ export const withSupabase: Handle = async ({ event, resolve }) => {
 					...options,
 					path: '/',
 					httpOnly: true,
-					secure: true,
+					// Only require secure cookies in production (HTTPS)
+					secure: event.url.protocol === 'https:',
 					sameSite: 'lax'
 				});
 			}

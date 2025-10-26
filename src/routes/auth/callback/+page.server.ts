@@ -7,15 +7,21 @@ import { redirect } from '@sveltejs/kit';
 export const prerender = false;
 
 export const load: PageServerLoad = async (event) => {
-	const code = event.url.searchParams.get('code');
-	const next = event.url.searchParams.get('next') ?? '/app';
+    const code = event.url.searchParams.get('code');
+    const access_token = event.url.searchParams.get('access_token');
+    const refresh_token = event.url.searchParams.get('refresh_token');
+    const next = event.url.searchParams.get('next') ?? '/app';
 
-	if (!code) {
-		// No code: render the page so the client can process hash tokens
-		return {};
-	}
+    if (!code) {
+        // Token-based (implicit) flow fallback: accept tokens in query (Android sometimes strips hashes)
+        if (access_token || refresh_token) {
+            return {};
+        }
+        // No code and no tokens: render the page
+        return {};
+    }
 
-	const supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+    const supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
 		cookies: {
 			getAll: () => event.cookies.getAll().map((c) => ({ name: c.name, value: c.value })),
 			setAll: (arr) =>
@@ -23,8 +29,9 @@ export const load: PageServerLoad = async (event) => {
 					event.cookies.set(name, value, {
 						...options,
 						path: '/',
-						httpOnly: true,
-						secure: true,
+                        httpOnly: true,
+                        // Use secure cookies only when served over HTTPS; required on production
+                        secure: event.url.protocol === 'https:',
 						sameSite: 'lax'
 					})
 				)
