@@ -5,10 +5,10 @@ import { HttpStatus } from '$lib/types/http';
 export const prerender = false;
 
 export const load: PageServerLoad = async (event) => {
-	if (event.locals.user) {
-		const next = event.url.searchParams.get('next') || '/app';
-		throw redirect(HttpStatus.SEE_OTHER, next);
-	}
+    if (event.locals.user) {
+        const next = event.url.searchParams.get('next') || '/';
+        throw redirect(HttpStatus.SEE_OTHER, next);
+    }
 
 	// Handle OAuth errors
 	const error = event.url.searchParams.get('error');
@@ -80,7 +80,7 @@ export const actions: Actions = {
 			}
 
 			// User is automatically signed in after registration
-			const next = event.url.searchParams.get('next') || '/app';
+            const next = event.url.searchParams.get('next') || '/';
 			throw redirect(HttpStatus.SEE_OTHER, next);
 		} else {
 			// Login logic
@@ -102,7 +102,7 @@ export const actions: Actions = {
 				return fail(HttpStatus.UNAUTHORIZED, { message: error.message });
 			}
 
-			const next = event.url.searchParams.get('next') || '/app';
+            const next = event.url.searchParams.get('next') || '/';
 			throw redirect(HttpStatus.SEE_OTHER, next);
 		}
 	}

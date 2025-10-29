@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { Home } from '$lib/components';
+  // Root page redirects server-side
 </script>
 
-<Home />
+<div>
+  Redirecting to login...
+</div>
